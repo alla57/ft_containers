@@ -3,10 +3,10 @@
 
 int main()
 {
-	int *a;
-	std::vector<int> b;
+	std::vector<int>* a = new std::vector<int>;
 	(void)a;
-	(void)b;
+	delete a;
+	// (void)b;
 	// std::cout << sizeof(a) << std::endl;
 	// std::vector<int> b;
 	// b.push_back(25);

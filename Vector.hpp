@@ -2,6 +2,8 @@
 #define VECTOR_HPP
 
 #include <memory>
+#include <exception>
+#include <iostream>
 
 namespace ft
 {
@@ -10,8 +12,7 @@ namespace ft
 	{
 	public :
 	//		CONSTRUCTORS
-		Vector();
-		explicit Vector(const Allocator& alloc);
+		explicit Vector(const Allocator& alloc = Allocator());
 		explicit Vector(size_type count, const T& value = T(), const Allocator& alloc = Allocator());
 		template<class InputIt>
 		Vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
@@ -85,15 +86,10 @@ namespace ft
 }
 
 //		CONSTRUCTORS DEFINITION
-template< class T, class Allocator = std::allocator<T> >
-Vector<T, Allocator>::Vector()
-{
-}
 
 template<class T, class Allocator = std::allocator<T> >
 Vector<T, Allocator>::Vector(const Allocator& alloc)
 {
-	if
 }
 
 
