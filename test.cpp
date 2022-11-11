@@ -3,32 +3,38 @@
 
 using namespace std;
 
-template <typename T>
-struct ParameterTraits {
-	template <typename PT, bool byValOrByRef> struct ParameterTraitsImpl;
-
+template<typename T>
+struct ParameterTraits
+{
+	template <typename PT, bool ByValOrByRef> struct ParameterTraitsImpl;
+	
 	template <typename PT>
-	struct ParameterTraitsImpl<PT, true> {
-		typedef PT Type;
+	struct ParameterTraitsImpl<PT, true>
+	{
+		typedef PT	type;
 	};
 
 	template <typename PT>
-	struct ParameterTraitsImpl<PT, false> {
-		typedef const PT & Type;
+	struct ParameterTraitsImpl<PT, false>
+	{
+		typedef PT&	type;
 	};
-	typedef typename ParameterTraitsImpl<T, (sizeof(T) < sizeof(void *))>::Type ParameterType;
+
+	typedef typename ParameterTraitsImpl< T, (sizeof(T) < sizeof(T&))>::type	ParameterType;
 };
 
-template <typename T>
-T mini(typename ParameterTraits<T>::ParameterType first, typename ParameterTraits<T>::ParameterType second)
+template<typename T>
+T min(typename ParameterTraits<T>::ParameterType first, typename ParameterTraits<T>::ParameterType last)
 {
-	return (first < second ? first : second);
+	std::cout << sizeof(first) << std::endl;
+	std::cout << sizeof(last) << std::endl;
+	return (first);
 }
 
 int main()
 {
-	std::vector<int>* a = new std::vector<int>;
-	(void)a;
-	delete a;
+	char a = 'a';
+	char b = 'b';
+	min<char>(a, b);
 	return (0);
 }
