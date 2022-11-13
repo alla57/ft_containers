@@ -41,6 +41,11 @@ namespace ft
 		typedef ft::random_access_iterator_tag	iterator_category;
 	};
 
+	//		ITERATOR
+	template<class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
+	struct iterator
+	{};
+
 	//		REVERSE_ITERATOR
 	template<class Iter>
 	class reverse_iterator : public iterator	<typename iterator_traits<Iter>::iterator_category,
@@ -60,22 +65,22 @@ namespace ft
 		typedef typename iterator_traits<Iter>::pointer			pointer;
 
 		//		Constructors
-		reverse_iterator();
-		explicit reverse_iterator(iterator_type x);
+		reverse_iterator() : current(){}
+		explicit reverse_iterator(iterator_type x) : current(x){}
 		template<class U>
-		reverse_iterator(const reverse_iterator<U>& u);
+		reverse_iterator(const reverse_iterator<U>& other) : current(other.current){}
 
 		//		Assignement Operator Overload
 		template<class U>
 		reverse_iterator& operator=(const reverse_iterator<U>& other);
 
 		//		Member functions
-		iterator_type base() const;
+		iterator_type base() const {return(current);}
 
 		//		Operator Overloads
-		reference operator*() const;
-		pointer operator->() const;
-		reference operator[](difference_type n) const;
+		reference operator*() const {iterator_type tmp = current; return *--tmp;}
+		pointer operator->() const {return &(operator*());}
+		reference operator[](difference_type n) const {}; // to implement
 		reverse_iterator& operator++();
 		reverse_iterator& operator--();
 		reverse_iterator operator++(int);

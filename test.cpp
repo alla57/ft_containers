@@ -1,40 +1,41 @@
 #include <vector>
 #include <iostream>
-
-using namespace std;
-
-template<typename T>
-struct ParameterTraits
-{
-	template <typename PT, bool ByValOrByRef> struct ParameterTraitsImpl;
-	
-	template <typename PT>
-	struct ParameterTraitsImpl<PT, true>
-	{
-		typedef PT	type;
-	};
-
-	template <typename PT>
-	struct ParameterTraitsImpl<PT, false>
-	{
-		typedef PT&	type;
-	};
-
-	typedef typename ParameterTraitsImpl< T, (sizeof(T) < sizeof(T&))>::type	ParameterType;
-};
-
-template<typename T>
-T min(typename ParameterTraits<T>::ParameterType first, typename ParameterTraits<T>::ParameterType last)
-{
-	std::cout << sizeof(first) << std::endl;
-	std::cout << sizeof(last) << std::endl;
-	return (first);
-}
+#include <iterator>
 
 int main()
 {
-	char a = 'a';
-	char b = 'b';
-	min<char>(a, b);
+	std::vector<int> a;
+	a.push_back(1);
+	a.push_back(2);
+	a.push_back(3);
+	a.push_back(4);
+	a.push_back(5);
+	a.push_back(6);
+	a.push_back(7);
+	// std::vector<int>::iterator it;
+	// it = a.begin();
+	// it--;
+	std::reverse_iterator<std::vector<int>::iterator> rev_it(a.begin());
+	// rev_it = a.begin();
+
+	std::cout << rev_it[-1] << std::endl;
+	// std::cout << &(*it) << std::endl;
+
+	// std::cout << &(*(a.end())) << std::endl;
+	// std::cout << &(*rev_it) << std::endl;
+
+	// std::vector<int>::iterator it;
+	// it = a.begin();
+	// std::cout << *it << std::endl;
+	// it++;
+	// std::cout << *it << std::endl;
+	// it++;
+	// std::cout << *it << std::endl;
+
+	// std::cout << *rev_it << std::endl;
+	// rev_it--;
+	// std::cout << *rev_it << std::endl;
+	// rev_it--;
+	// std::cout << *rev_it << std::endl;
 	return (0);
 }
