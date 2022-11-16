@@ -72,7 +72,7 @@ namespace ft
 
 		//		Assignement Operator Overload
 		template<class U>
-		reverse_iterator& operator=(const reverse_iterator<U>& other);
+		reverse_iterator& operator=(const reverse_iterator<U>& other){current = other.current; return (*this);}
 
 		//		Member functions
 		iterator_type base() const {return(current);}
