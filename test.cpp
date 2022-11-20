@@ -2,7 +2,17 @@
 #include <iostream>
 #include <iterator>
 #include "Iterator.hpp"
+#include "Utilities.hpp"
+// #include <type_traits>
+#include <stdint.h>
 
+int main()
+{
+	std::cout << ft::is_integral<const int>::value << std::endl;
+	return (0);
+}
+
+/*
 int main()
 {
 	std::vector<int> a;
@@ -39,4 +49,4 @@ int main()
 	// rev_it--;
 	// std::cout << *rev_it << std::endl;
 	return (0);
-}
+}*/
