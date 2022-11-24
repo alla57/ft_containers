@@ -39,10 +39,10 @@ namespace ft
 	// 						IS_INTEGRAL_HELPER
 	template<class T>
 	struct is_integral_helper : false_type{};
-	// 			Boolean
+	// 		Boolean
 	template<>
 	struct is_integral_helper<bool> : true_type{};
-	// 			Characters
+	// 		Characters
 	template<>
 	struct is_integral_helper<char> : true_type{};
 	template<>
@@ -51,7 +51,7 @@ namespace ft
 	struct is_integral_helper<signed char> : true_type{};
 	template<>
 	struct is_integral_helper<unsigned char> : true_type{};
-	// 			Integers
+	// 		Integers
 	template<>
 	struct is_integral_helper<short int> : true_type{};
 	template<>
