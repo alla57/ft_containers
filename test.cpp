@@ -6,9 +6,25 @@
 // #include <type_traits>
 #include <stdint.h>
 
+bool	j(int v)
+{
+	if (v == 25)
+		return (true);
+	return (false);
+}
+
+template<typename pred>
+void abc(pred p)
+{
+	if (p(25))
+		std::cout << "oui" << std::endl;
+	else
+		std::cout << "non" << std::endl;
+}
+
 int main()
 {
-	std::cout << ft::is_integral<const int>::value << std::endl;
+	abc<bool(*)(int)>(j);
 	return (0);
 }
 
