@@ -24,10 +24,15 @@ namespace ft
 	bool equal(InputIT1 first1, InputIT1 last1, InputIT2 first2, BinaryPredicate pred)
 	{
 		InputIT1 i = first1;
-		if (*i != *(first2 + (i - first1)))
+		if (*i != *(first2 + (i - first1)) || pred(*i, *(first2 + (i - first1))) == false)
 			return (false);
-		while (i)
-		, pred(*i, *(first2 + (i - first1))) != false
+		++i;
+		while (i != last1)
+		{
+			if (*i != *(first2 + (i - first1)) || pred(*i, *(first2 + (i - first1))) == false) // maybe only predicate condition to respect ???
+				return (false);
+			++i;
+		}
 		if (!pred(first1, last1))
 			return (false);
 		equal<InputIT1, InputIT2>(first1, last1, first2, InputIT2 last2)
