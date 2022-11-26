@@ -1,8 +1,8 @@
-#ifndef UTILITIES_HPP
-# define UTILITIES_HPP
+#ifndef TYPETRAITS_HPP
+# define TYPETRAITS_HPP
 
-#include <stdint.h>
-# include <uchar.h>
+// # include <stdint.h>
+// # include <uchar.h>
 
 namespace ft
 {
