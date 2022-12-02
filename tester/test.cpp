@@ -16,12 +16,12 @@
 #include "catch.hpp"
 
 template <class T>
-bool	iteratorTraitsCheck(T a){
-	if (std::iterator_traits<T>::difference_type != T::difference_type)
+bool	iterator_traitsCheck(T iterator){
+	if (!std::is_same<typename std::iterator_traits<T>::difference_type, typename T::difference_type>::value)
 		return (false);
-	if (std::iterator_traits<T>::value_type != T::value_type)
+	if (!std::is_same<typename std::iterator_traits<T>::value_type, typename T::value_type>::value)
 		return (false);
-	if (std::iterator_traits<T>::pointer != T::pointer)
+	if (!std::is_same<typename std::iterator_traits<T>::pointer, typename T::pointer>::value)
 		return (false);
 	return (true);
 }
@@ -37,7 +37,10 @@ bool	iteratorTraitsCheck(T a){
 // }
 
 TEST_CASE("Iterator tests", "[factorial]"){
-	CHECK((iteratorTraitsCheck(std::vector<int>::iterator)));
+	std::vector<int>::iterator it;
+	SECTION("Checking iterator_traits using std::vector iterator"){
+	CHECK(iterator_traitsCheck(it));
+	}
 }
 
 // unsigned int Factorial( unsigned int number ) {
