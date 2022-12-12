@@ -43,6 +43,22 @@ TEST_CASE("Iterator tests", "[factorial]"){
 	}
 }
 
+TEST_CASE("Another test", "[another]")
+{
+	std::cout << "test 1" << std::endl;
+	std::cout <<"this test suceed" << std::endl;
+}
+
+TEST_CASE("Another other test", "[another]")
+{
+	std::cout << "test other" << std::endl;
+}
+
+TEST_CASE("Third test", "[two]")
+{
+	std::cout << "test 2" << std::endl;
+}
+
 // unsigned int Factorial( unsigned int number ) {
 //     return number <= 1 ? number : Factorial(number-1)*number;
 // }
