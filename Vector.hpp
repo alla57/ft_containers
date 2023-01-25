@@ -5,6 +5,8 @@
 #include <exception>
 #include <iostream>
 
+#include "Iterator.hpp"
+
 namespace ft
 {
 
@@ -13,18 +15,18 @@ namespace ft
 	{
 	public :
 	//		MEMBER TYPES
-		typedef T									value_type;
-		typedef Allocator							allocator_type;
-		typedef std::size_t							size_type;
-		typedef std::ptrdiff_t						difference_type;
-		typedef value_type&							reference;
-		typedef const value_type&					const_reference;
-		typedef	typename Allocator::pointer			pointer;
-		typedef typename Allocator::const_pointer	const_pointer;
-		// typedef ft::Iterator				iterator;
-		// typedef	ft::const_iterator			const_iterator;
-		// typedef	ft::reverse_iterator<iterator>		reverse_iterator;
-		// typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
+		typedef T										value_type;
+		typedef Allocator								allocator_type;
+		typedef std::size_t								size_type;
+		typedef std::ptrdiff_t							difference_type;
+		typedef value_type&								reference;
+		typedef const value_type&						const_reference;
+		typedef	typename Allocator::pointer				pointer;
+		typedef typename Allocator::const_pointer		const_pointer;
+		typedef ft::normal_iterator<pointer>			iterator;
+		typedef	ft::normal_iterator<const_pointer>		const_iterator;
+		typedef	ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	//		CONSTRUCTORS
 		explicit vector(const Allocator& alloc = Allocator());
