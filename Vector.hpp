@@ -29,8 +29,11 @@ namespace ft
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	//		CONSTRUCTORS
-		explicit vector(const Allocator& alloc = Allocator());
-		explicit vector(size_type count, const T& value = T(), const Allocator& alloc = Allocator());
+		explicit vector(const Allocator& alloc = Allocator()) : myAlloc(alloc){}
+		explicit vector(size_type count, const T& value = T(), const Allocator& alloc = Allocator()) : myAlloc(alloc), length_v(count){
+			for (size_type i = 0; i < count; ++i)
+				this->push_back(value);
+		}
 		template<class InputIt>
 		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
 		vector(const vector& other);
@@ -90,6 +93,8 @@ namespace ft
 		void swap( vector& other );
 
 	private :
+		allocator_type	myAlloc;
+		size_type		length_v;
 	}
 
 	//		NON-MEMBER FUNCTIONS
@@ -112,7 +117,7 @@ namespace ft
 //		CONSTRUCTORS DEFINITION
 
 template<class T, class Allocator = std::allocator<T> >
-Vector<T, Allocator>::Vector(const Allocator& alloc)
+Vector<T, Allocator>::Vector(const Allocator& alloc = Allocator())
 {
 }
 
