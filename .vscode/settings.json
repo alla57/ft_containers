@@ -66,6 +66,14 @@
 		"thread": "cpp",
 		"variant": "cpp",
 		"ios": "cpp",
-		"valarray": "cpp"
+		"valarray": "cpp",
+		"list": "cpp",
+		"span": "cpp",
+		"stop_token": "cpp",
+		"semaphore": "cpp",
+		"unistd.h": "c",
+		"get_next_line.h": "c",
+		"string.h": "c",
+		"types.h": "c"
 	}
 }

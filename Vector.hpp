@@ -9,7 +9,7 @@ namespace ft
 {
 
 	template< class T, class Allocator = std::allocator<T> >
-	class Vector
+	class vector
 	{
 	public :
 	//		MEMBER TYPES
@@ -27,17 +27,17 @@ namespace ft
 		// typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	//		CONSTRUCTORS
-		explicit Vector(const Allocator& alloc = Allocator());
-		explicit Vector(size_type count, const T& value = T(), const Allocator& alloc = Allocator());
+		explicit vector(const Allocator& alloc = Allocator());
+		explicit vector(size_type count, const T& value = T(), const Allocator& alloc = Allocator());
 		template<class InputIt>
-		Vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
-		Vector(const Vector& other);
+		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
+		vector(const vector& other);
 
 	//		DESTRUCTOR
-		~Vector();
+		~vector();
 
 	//		ASSIGNEMENT OPERATOR OVERLOAD
-		Vector& operator=(const Vector& other);
+		vector& operator=(const vector& other);
 
 	//		MEMBER FUNCTIONS
 		void assign(size_type count, const T& value);
