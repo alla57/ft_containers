@@ -156,6 +156,9 @@ namespace ft
 		template<class Iter>
 		normal_iterator& operator=(const normal_iterator<Iter> & i){current = i.base(); return (*this);}
 
+		//		Member functions
+		const Iter& base() const {return (current);}
+
 		//		Operator Overloads
 		reference operator*() const {return (*current);}
 		pointer operator->() const {return current;}
@@ -168,7 +171,6 @@ namespace ft
 		normal_iterator operator+(difference_type n) const {return normal_iterator(current + n);}
 		normal_iterator& operator-=(difference_type n) {current -= n; return (*this);}
 		normal_iterator operator-(difference_type n) const {return normal_iterator(current - n);}
-		const Iter& base() const {return (current);}
 	}
 	//		normal_iterator Non Members Functions
 	template<typename IteratorL, typename IteratorR>
