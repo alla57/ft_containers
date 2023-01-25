@@ -129,6 +129,97 @@ namespace ft
 	typename reverse_iterator<Iter>::difference_type operator-(const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs){
 		return (rhs.base() - lhs.base());
 	}
+
+	// 									NORMAL_ITERATOR
+	template<class Iter>
+	class normal_iterator
+	{
+	protected:
+		// 		Member Objects
+		Iter current;
+	public:
+		// 		Member Types
+		typedef Iter												iterator_type;
+		typedef typename iterator_traits<Iter>::iterator_category	iterator_category;
+		typedef typename iterator_traits<Iter>::value_type			value_type;
+		typedef typename iterator_traits<Iter>::difference_type 	difference_type;
+		typedef typename iterator_traits<Iter>::reference			reference;
+		typedef typename iterator_traits<Iter>::pointer				pointer;
+
+		// 		Constructors
+		normal_iterator() : current(Iter()){}
+		normal_iterator(const Iter& i) : current(i){}
+		template<typename U>
+		normal_iterator(const normal_iterator<U> & i) : current(i.base()){}
+
+		//		Assignement Operator Overload
+		template<class Iter>
+		normal_iterator& operator=(const normal_iterator<Iter> & i){current = i.base(); return (*this);}
+
+		//		Operator Overloads
+		reference operator*() const {return (*current);}
+		pointer operator->() const {return current;}
+		normal_iterator& operator++(){++current; return (*this);}
+		normal_iterator operator++(int){return (normal_iterator(current++));}
+		normal_iterator& operator--(){--current; return (*this);}
+		normal_iterator operator--(int){return (normal_iterator(current--));}
+		reference operator[](difference_type n) const {return current[n];}
+		normal_iterator& operator+=(difference_type n) {current += n; return (*this);}
+		normal_iterator operator+(difference_type n) const {return normal_iterator(current + n);}
+		normal_iterator& operator-=(difference_type n) {current -= n; return (*this);}
+		normal_iterator operator-(difference_type n) const {return normal_iterator(current - n);}
+		const Iter& base() const {return (current);}
+	}
+	//		normal_iterator Non Members Functions
+	template<typename IteratorL, typename IteratorR>
+	bool operator==(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+		return (lhs.base() == rhs.base());
+	}
+	template<typename Iterator>
+    bool operator==(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+		return (lhs.base() == rhs.base());
+	}
+	template<typename IteratorL, typename IteratorR>
+	bool operator!=(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+		return (lhs.base() != rhs.base());
+	}
+	template<typename Iterator>
+	bool operator!=(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+		return (lhs.base() != rhs.base());
+	}
+	// Random access iterator requirements
+	template<typename IteratorL, typename IteratorR>
+	bool operator<(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+		return (lhs.base() < rhs.base());
+	}
+	template<typename Iterator>
+	bool operator<(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+		return (lhs.base() < rhs.base());
+	}
+	template<typename IteratorL, typename IteratorR>
+	bool operator>(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+		return (lhs.base() > rhs.base());
+	}
+	template<typename Iterator>
+	bool operator>(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+		return (lhs.base() > rhs.base());
+	}
+	template<typename IteratorL, typename _IteratorR>
+	bool operator<=(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+		return (lhs.base() <= rhs.base());
+	}
+	template<typename Iterator>
+	bool operator<=(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+		return (lhs.base() <= rhs.base());
+	}
+	template<typename IteratorL, typename _IteratorR>
+	bool operator>=(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+		return (lhs.base() >= __rhs.base());
+	}
+	template<typename Iterator>
+	bool operator>=(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+		return (lhs.base() >= rhs.base());
+	}
 }
 
 #endif
