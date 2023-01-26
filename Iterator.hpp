@@ -174,53 +174,65 @@ namespace ft
 	}
 	//		normal_iterator Non Members Functions
 	template<typename IteratorL, typename IteratorR>
-	bool operator==(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+	bool operator==(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
 		return (lhs.base() == rhs.base());
 	}
 	template<typename Iterator>
-    bool operator==(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+    bool operator==(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
 		return (lhs.base() == rhs.base());
 	}
 	template<typename IteratorL, typename IteratorR>
-	bool operator!=(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+	bool operator!=(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
 		return (lhs.base() != rhs.base());
 	}
 	template<typename Iterator>
-	bool operator!=(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+	bool operator!=(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
 		return (lhs.base() != rhs.base());
 	}
 	// Random access iterator requirements
 	template<typename IteratorL, typename IteratorR>
-	bool operator<(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+	bool operator<(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
 		return (lhs.base() < rhs.base());
 	}
 	template<typename Iterator>
-	bool operator<(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+	bool operator<(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
 		return (lhs.base() < rhs.base());
 	}
 	template<typename IteratorL, typename IteratorR>
-	bool operator>(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+	bool operator>(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
 		return (lhs.base() > rhs.base());
 	}
 	template<typename Iterator>
-	bool operator>(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+	bool operator>(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
 		return (lhs.base() > rhs.base());
 	}
 	template<typename IteratorL, typename _IteratorR>
-	bool operator<=(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
+	bool operator<=(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
 		return (lhs.base() <= rhs.base());
 	}
 	template<typename Iterator>
-	bool operator<=(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+	bool operator<=(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
 		return (lhs.base() <= rhs.base());
 	}
 	template<typename IteratorL, typename _IteratorR>
-	bool operator>=(const normal_iterator<IteratorL> & lhs, const normal_iterator<IteratorR> & rhs){
-		return (lhs.base() >= __rhs.base());
-	}
-	template<typename Iterator>
-	bool operator>=(const normal_iterator<Iterator> & lhs, const normal_iterator<Iterator> & rhs){
+	bool operator>=(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
 		return (lhs.base() >= rhs.base());
+	}
+	template<typename Iterator>
+	bool operator>=(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
+		return (lhs.base() >= rhs.base());
+	}
+	template<typename IteratorL, typename IteratorR>
+	typename ft::normal_iterator<IteratorL>::difference_type operator-(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
+		return (lhs.base() - rhs.base());
+	}
+	template<typename Iterator>
+	typename ft::normal_iterator<Iterator>::difference_type operator-(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
+		return (lhs.base() - rhs.base());
+	}
+	template<typename Iterator>
+	ft::normal_iterator<Iterator> operator+(typename ft::normal_iterator<_Iterator>::difference_type n, const ft::normal_iterator<_Iterator>& i){
+		return (ft::normal_iterator<Iterator>(i.base() + n));
 	}
 }
 
