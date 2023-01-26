@@ -29,10 +29,13 @@ namespace ft
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	//		CONSTRUCTORS
-		explicit vector(const Allocator& alloc = Allocator()) : myAlloc(alloc){}
-		explicit vector(size_type count, const T& value = T(), const Allocator& alloc = Allocator()) : myAlloc(alloc), length_v(count){
-			for (size_type i = 0; i < count; ++i)
-				this->push_back(value);
+		explicit vector(const Allocator& alloc = Allocator()) : m_allocator(alloc){}
+		explicit vector(size_type count, const value_type& value = value_type(), const allocator_type& alloc = allocator_type()) : _allocator(alloc){
+			if (count > _allocator.max_size())
+				throw(std::length_error("cannot create std::vector larger than max_size()"));
+			_start = _allocator.allocate(count);
+			_end_of_storage = _start + count;
+			std::uninitialized_fill(_start, _end_of_storage, value);
 		}
 		template<class InputIt>
 		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
@@ -93,8 +96,12 @@ namespace ft
 		void swap( vector& other );
 
 	private :
-		allocator_type	myAlloc;
-		size_type		length_v;
+		allocator_type	_allocator;
+		pointer			_start;
+		pointer			_finish;
+		pointer			_end_of_storage;
+
+		size_type	_check_init_length()
 	}
 
 	//		NON-MEMBER FUNCTIONS
@@ -120,6 +127,5 @@ template<class T, class Allocator = std::allocator<T> >
 Vector<T, Allocator>::Vector(const Allocator& alloc = Allocator())
 {
 }
-
 
 #endif
