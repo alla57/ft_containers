@@ -16,7 +16,5 @@ int main()
 	it = arr;
 	std::__is_integer< ft::normal_iterator<int*> >::__type _Integral;
 	std::cout << _Integral.value << std::endl;
-	// std::__throw_length_error(__N("cannot create std::vector larger than max_size()"));
-	// throw(std::length_error("cannot create std::vector larger than max_size()"));
 	return (0);
 }

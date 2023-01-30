@@ -29,7 +29,7 @@ namespace ft
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	//		CONSTRUCTORS
-		explicit vector(const Allocator& alloc = Allocator()) : m_allocator(alloc){}
+		explicit vector(const Allocator& alloc = Allocator()) : _allocator(alloc){}
 		explicit vector(size_type count, const value_type& value = value_type(), const allocator_type& alloc = allocator_type()) : _allocator(alloc){
 			if (count > _allocator.max_size())
 				throw(std::length_error("cannot create std::vector larger than max_size()"));
@@ -37,8 +37,15 @@ namespace ft
 			_end_of_storage = _start + count;
 			std::uninitialized_fill(_start, _end_of_storage, value);
 		}
+		// optimizable if we add a specialization of forward iterator
+		// maybe it should throw if error in push_back process
 		template<class InputIt>
-		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator());
+		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
+			for (; first != last; ++first)
+			{
+				push_back(*first);
+			}
+		}
 		vector(const vector& other);
 
 	//		DESTRUCTOR
