@@ -153,8 +153,8 @@ namespace ft
 		normal_iterator(const normal_iterator<U> & i) : current(i.base()){}
 
 		//		Assignement Operator Overload
-		template<class Iter>
-		normal_iterator& operator=(const normal_iterator<Iter> & i){current = i.base(); return (*this);}
+		template<class U>
+		normal_iterator& operator=(const normal_iterator<U> & i){current = i.base(); return (*this);}
 
 		//		Member functions
 		const Iter& base() const {return (current);}
@@ -171,7 +171,7 @@ namespace ft
 		normal_iterator operator+(difference_type n) const {return normal_iterator(current + n);}
 		normal_iterator& operator-=(difference_type n) {current -= n; return (*this);}
 		normal_iterator operator-(difference_type n) const {return normal_iterator(current - n);}
-	}
+	};
 	//		normal_iterator Non Members Functions
 	template<typename IteratorL, typename IteratorR>
 	bool operator==(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
@@ -206,7 +206,7 @@ namespace ft
 	bool operator>(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
 		return (lhs.base() > rhs.base());
 	}
-	template<typename IteratorL, typename _IteratorR>
+	template<typename IteratorL, typename IteratorR>
 	bool operator<=(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
 		return (lhs.base() <= rhs.base());
 	}
@@ -214,7 +214,7 @@ namespace ft
 	bool operator<=(const ft::normal_iterator<Iterator>& lhs, const ft::normal_iterator<Iterator>& rhs){
 		return (lhs.base() <= rhs.base());
 	}
-	template<typename IteratorL, typename _IteratorR>
+	template<typename IteratorL, typename IteratorR>
 	bool operator>=(const ft::normal_iterator<IteratorL>& lhs, const ft::normal_iterator<IteratorR>& rhs){
 		return (lhs.base() >= rhs.base());
 	}
@@ -231,7 +231,7 @@ namespace ft
 		return (lhs.base() - rhs.base());
 	}
 	template<typename Iterator>
-	ft::normal_iterator<Iterator> operator+(typename ft::normal_iterator<_Iterator>::difference_type n, const ft::normal_iterator<_Iterator>& i){
+	ft::normal_iterator<Iterator> operator+(typename ft::normal_iterator<Iterator>::difference_type n, const ft::normal_iterator<Iterator>& i){
 		return (ft::normal_iterator<Iterator>(i.base() + n));
 	}
 }

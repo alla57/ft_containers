@@ -9,7 +9,7 @@ class two
 		}
 	};
 
-class one : public 
+class one : public two
 {
 public:
 	one(){
