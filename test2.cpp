@@ -19,7 +19,8 @@
 // 	std::cout << _Integral.value << std::endl;
 // 	return (0);
 // }
-
+#include <limits>
+#include "TypeTraits.hpp"
 int main()
 {
 	std::vector<int> v(25, 8);
@@ -28,5 +29,9 @@ int main()
 	// std::vector<int>::iterator itLast(u.at(5));
 	v.insert(v.end(), u.begin(), u.begin() + 5);//v.end(), u.begin(), u.begin() + 5
 	std::cout << v.at(29) << std::endl;
+	// v.reserve()
 	return (0);
 }
+
+// return (std::min)(__diffmax, __allocmax);
+// there is two parenthesis here, the first one is a function call, the second one is a function call

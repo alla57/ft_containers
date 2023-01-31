@@ -31,7 +31,8 @@ namespace ft
 	//		CONSTRUCTORS
 		explicit vector(const Allocator& alloc = Allocator()) : _allocator(alloc){}
 		explicit vector(size_type count, const value_type& value = value_type(), const allocator_type& alloc = allocator_type()) : _allocator(alloc){
-			_initialize_and_fill(count, value);
+			_allocate(count);
+			std::uninitialized_fill(_start, _end_of_storage, value);
 		}
 		template<class InputIt>
 		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
@@ -80,11 +81,15 @@ namespace ft
 		const_reverse_iterator rend() const;
 
 	//		CAPACITY
-		bool empty() const;
-		size_type size() const;
-		size_type max_size() const;
-		void reserve( size_type new_cap );
-		size_type capacity() const;
+		bool empty() const {return (_start == _finish);}
+		size_type size() const {return (_finish - _start);}
+		size_type max_size() const {return _allocator.max_size();}
+		void reserve( size_type new_cap ) {
+			if (new_cap < this->capacity())
+				return ;
+				
+			}
+		size_type capacity() const {return (_end_of_storage - _start);}
 
 	//		MODIFIERS
 		void clear(){
@@ -106,7 +111,7 @@ namespace ft
 		pointer			_start;
 		pointer			_finish;
 		pointer			_end_of_storage;
-		void	_initialize_and_fill(size_type count, const value_type& value){
+		void	_initialize_and_fill(size_type count, const value_type& value){ //Unused
 			if (count > _allocator.max_size())
 				throw(std::length_error("cannot create std::vector larger than max_size()"));
 			_start = _allocator.allocate(count);
@@ -122,9 +127,12 @@ namespace ft
 				push_back(*first);
 			}
 		}
-		
-
-		size_type	_check_init_length()
+		void	_allocate(size_type count){
+			if (count > _allocator.max_size())
+				throw(std::length_error("cannot create std::vector larger than max_size()"));
+			_start = _allocator.allocate(count);
+			_end_of_storage = _start + count;
+		}
 	}
 
 	//		NON-MEMBER FUNCTIONS
