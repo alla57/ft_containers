@@ -31,22 +31,16 @@ namespace ft
 	//		CONSTRUCTORS
 		explicit vector(const Allocator& alloc = Allocator()) : _allocator(alloc){}
 		explicit vector(size_type count, const value_type& value = value_type(), const allocator_type& alloc = allocator_type()) : _allocator(alloc){
-			if (count > _allocator.max_size())
-				throw(std::length_error("cannot create std::vector larger than max_size()"));
-			_start = _allocator.allocate(count);
-			_end_of_storage = _start + count;
-			std::uninitialized_fill(_start, _end_of_storage, value);
+			_initialize_and_fill(count, value);
 		}
-		// optimizable if we add a specialization of forward iterator
-		// maybe it should throw if error in push_back process
 		template<class InputIt>
 		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
-			for (; first != last; ++first)
-			{
-				push_back(*first);
-			}
+			if (typename ft::is_integral<InputIt>)
+				_initialize_and_fill(static_cast<size_type>(first), value);
+			else
+				_range_initialize(first, last);
 		}
-		vector(const vector& other);
+		vector(const vector& other){*this = other;}
 
 	//		DESTRUCTOR
 		~vector();
@@ -55,7 +49,10 @@ namespace ft
 		vector& operator=(const vector& other);
 
 	//		MEMBER FUNCTIONS
-		void assign(size_type count, const T& value);
+		void assign(size_type count, const T& value){
+			clear();
+			
+		}
 		template<class InputIt>
 		void assign(InputIt first, InputIt last);
 		allocator_type get_allocator() const; // std:: ????
@@ -90,7 +87,9 @@ namespace ft
 		size_type capacity() const;
 
 	//		MODIFIERS
-		void clear();
+		void clear(){
+			
+		}
 		iterator insert( const_iterator pos, const T& value );
 		iterator insert( const_iterator pos, size_type count, const T& value );
 		template< class InputIt >
@@ -107,6 +106,23 @@ namespace ft
 		pointer			_start;
 		pointer			_finish;
 		pointer			_end_of_storage;
+		void	_initialize_and_fill(size_type count, const value_type& value){
+			if (count > _allocator.max_size())
+				throw(std::length_error("cannot create std::vector larger than max_size()"));
+			_start = _allocator.allocate(count);
+			_end_of_storage = _start + count;
+			std::uninitialized_fill(_start, _end_of_storage, value);
+		}
+		// optimizable if we add a specialization of forward iterator
+		// maybe it should throw if error in push_back process
+		template<class InputIt>
+		void	_range_initialize(InputIt first, InputIt last){
+			for (; first != last; ++first)
+			{
+				push_back(*first);
+			}
+		}
+		
 
 		size_type	_check_init_length()
 	}
