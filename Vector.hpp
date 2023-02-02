@@ -106,7 +106,22 @@ namespace ft
 			_range_destroy(_start, _finish);
 			_finish = _start;
 		}
-		iterator insert( const_iterator pos, const T& value );
+		iterator insert( const_iterator pos, const T& value ){
+			const size_type pos_index = pos - begin();
+			if (_finish != _end_of_storage)
+			{
+				if (pos == end())
+				{
+					_construct(_finish, value);
+					++_finish;
+				}
+				else
+					_insert(pos, value);
+			}
+			else
+				_realloc_insert(pos, value);
+			return iterator(_start + pos_index);
+		}
 		iterator insert( const_iterator pos, size_type count, const T& value );
 		template< class InputIt >
 		iterator insert( const_iterator pos, InputIt first, InputIt last );

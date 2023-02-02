@@ -5,17 +5,18 @@
 #include <stdexcept>
 #include <memory>
 
-void	test(std::vector<int>::pointer& pone)
-{
-	++pone;
-}
-
 int main()
 {
 	std::vector<int> v(12, 8);
-	std::vector<int>::pointer pone = &(*v.begin());
-	test(pone);
-	*pone = 3;
-	std::cout << *v.begin() << std::endl;
+	if (*v.begin())
+		if (*v.begin() == 7)
+		{
+			std::cout << "one" << std::endl;
+			std::cout << "two" << std::endl;
+		}
+		else
+			std::cout << "three" << std::endl;
+	else
+		std::cout << "green" << std::endl;
 	return (0);
 }
