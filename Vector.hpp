@@ -74,14 +74,14 @@ namespace ft
 		const T* data() const;
 
 	//		ITERATORS
-		iterator begin();
-		const_iterator begin() const;
-		iterator end();
-		const_iterator end() const;
-		reverse_iterator rbegin();
-		const_reverse_iterator rbegin() const;
-		reverse_iterator rend();
-		const_reverse_iterator rend() const;
+		iterator begin() {return iterator(_start);}
+		const_iterator begin() const {return const_iterator(_start);}
+		iterator end() {return iterator(_finish);}
+		const_iterator end() const {return const_iterator(_finish);}
+		reverse_iterator rbegin() {return reverse_iterator(begin());}
+		const_reverse_iterator rbegin() const {return const_reverse_iterator(begin());}
+		reverse_iterator rend() {return reverse_iterator(end());}
+		const_reverse_iterator rend() const {return const_reverse_iterator(end());}
 
 	//		CAPACITY
 		bool empty() const {return (_start == _finish);}
