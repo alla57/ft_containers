@@ -5,11 +5,17 @@
 #include <stdexcept>
 #include <memory>
 
+void	test(std::vector<int>::pointer& pone)
+{
+	++pone;
+}
+
 int main()
 {
-	std::allocator<int> alloc;
-	std::allocator<int>::pointer first = alloc.allocate(5);
-	std::uninitialized_fill(first, first + 5, 3);
-	std::cout << *first << std::endl;
+	std::vector<int> v(12, 8);
+	std::vector<int>::pointer pone = &(*v.begin());
+	test(pone);
+	*pone = 3;
+	std::cout << *v.begin() << std::endl;
 	return (0);
 }

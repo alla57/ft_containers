@@ -103,7 +103,8 @@ namespace ft
 
 	//		MODIFIERS
 		void clear(){
-			
+			_range_destroy(_start, _finish);
+			_finish = _start;
 		}
 		iterator insert( const_iterator pos, const T& value );
 		iterator insert( const_iterator pos, size_type count, const T& value );
@@ -148,7 +149,7 @@ namespace ft
 		}
 		pointer	_allocate_and_initialize(size_type count, const value_type& value){
 			pointer storage_start = _allocate(count);
-			std::uninitialized_fill(_start, storage_start + count, value);
+			std::uninitialized_fill(storage_start, storage_start + count, value);
 			return (storage_start);
 		}
 		void	_range_destroy(pointer first, pointer last){
