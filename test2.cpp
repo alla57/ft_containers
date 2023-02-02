@@ -7,16 +7,10 @@
 
 int main()
 {
-	std::vector<int> v(12, 8);
-	if (*v.begin())
-		if (*v.begin() == 7)
-		{
-			std::cout << "one" << std::endl;
-			std::cout << "two" << std::endl;
-		}
-		else
-			std::cout << "three" << std::endl;
-	else
-		std::cout << "green" << std::endl;
+	std::vector<int> v(11, 8);
+	std::cout << "avant size = " << v.capacity() << std::endl;
+	v.push_back(33);
+	v.insert
+	std::cout << "apres size = " << v.capacity() << std::endl;
 	return (0);
 }

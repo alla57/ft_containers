@@ -33,6 +33,7 @@ namespace ft
 		explicit vector(size_type count, const value_type& value = value_type(), const allocator_type& alloc = allocator_type()) : _allocator(alloc){
 			_start = _allocate_and_initialize(count, value);
 			_end_of_storage = _start + count;
+			_finish = _end_of_storage;
 		}
 		template<class InputIt>
 		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
@@ -40,6 +41,7 @@ namespace ft
 				{
 					_start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
 					_end_of_storage = _start + static_cast<size_type>(first);
+					_finish = _end_of_storage;
 				}
 			else
 				_range_initialize(first, last);
@@ -137,13 +139,14 @@ namespace ft
 		pointer			_start;
 		pointer			_finish;
 		pointer			_end_of_storage;
-		void	_initialize_and_fill(size_type count, const value_type& value){ //Unused
-			if (count > _allocator.max_size())
+		size_type _check_length(size_type n_elm_to_add) const{
+			if (max_size() - size() < n_elm_to_add)
 				throw(std::length_error("cannot create std::vector larger than max_size()"));
-			_start = _allocator.allocate(count);
-			_end_of_storage = _start + count;
-			std::uninitialized_fill(_start, _end_of_storage, value);
-		}
+			const size_type length = size() + std::max(size(), n_elm_to_add);
+			if (length < size() || length > max_size())
+				return (max_size());
+			return (length);
+      }
 		// optimizable if we add a specialization of forward iterator
 		// maybe it should throw if error in push_back process
 		template<class InputIt>
@@ -170,6 +173,34 @@ namespace ft
 		void	_range_destroy(pointer first, pointer last){
 			for (; first != last; ++first)
 				_allocator.destroy(first);
+		}
+		void	_construct(pointer pos, const value_type& value){
+			_allocator.construct(pos, value);
+		}
+		void	_insert(pointer pos, const value_type& value){
+			if (pos != _first)
+				--pos;
+			value_type tmp = value;
+			for (; pos != end; ++pos)
+			{
+				tmp = *pos;
+				*pos = tmp;
+			}
+		}
+		void	_realloc_and_insert(pointer pos, const value_type& value)
+		{
+			size_type new_capacity = _check_length(1);
+			pointer tmp_start = _allocate(new_cap);
+			size_type old_size = size();
+			size_type new_pos = pos - _start;
+			std::uninitialized_copy(_start, pos, tmp_start);
+			_construct(tmp_start + new_pos, value);
+			std::uninitialized_copy(pos, _finish, tmp_start + pos + 1);
+			_range_destroy(_start, _finish);
+			_deallocate(_start, _end_of_storage - start);
+			_start = tmp_start;
+			_end_of_storage = _start + new_capacity;
+			_finish = _start + old_size + 1;
 		}
 	}
 
