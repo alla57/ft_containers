@@ -31,13 +31,16 @@ namespace ft
 	//		CONSTRUCTORS
 		explicit vector(const Allocator& alloc = Allocator()) : _allocator(alloc){}
 		explicit vector(size_type count, const value_type& value = value_type(), const allocator_type& alloc = allocator_type()) : _allocator(alloc){
-			_allocate(count);
-			std::uninitialized_fill(_start, _end_of_storage, value);
+			_start = _allocate_and_initialize(count, value);
+			_end_of_storage = _start + count;
 		}
 		template<class InputIt>
 		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
 			if (typename ft::is_integral<InputIt>)
-				_initialize_and_fill(static_cast<size_type>(first), value);
+				{
+					_start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
+					_end_of_storage = _start + static_cast<size_type>(first);
+				}
 			else
 				_range_initialize(first, last);
 		}
@@ -87,8 +90,15 @@ namespace ft
 		void reserve( size_type new_cap ) {
 			if (new_cap < this->capacity())
 				return ;
-				
-			}
+			pointer tmp_start = _allocate(new_cap);
+			size_type old_size = size();
+			std::uninitialized_copy(_start, _finish, tmp_start);
+			_range_destroy(_start, _finish);
+			_deallocate(_start, _end_of_storage - _start);
+			_start = tmp_start;
+			_end_of_storage = _start + new_cap;
+			_finish = _start + old_size;
+		}
 		size_type capacity() const {return (_end_of_storage - _start);}
 
 	//		MODIFIERS
@@ -127,11 +137,23 @@ namespace ft
 				push_back(*first);
 			}
 		}
-		void	_allocate(size_type count){
+		pointer	_allocate(size_type count){
 			if (count > _allocator.max_size())
 				throw(std::length_error("cannot create std::vector larger than max_size()"));
-			_start = _allocator.allocate(count);
-			_end_of_storage = _start + count;
+			pointer storage_start = _allocator.allocate(count);
+			return (storage_start);
+		}
+		void	_deallocate(pointer start, std::size_t count){
+			alloc.deallocate(start, count);
+		}
+		pointer	_allocate_and_initialize(size_type count, const value_type& value){
+			pointer storage_start = _allocate(count);
+			std::uninitialized_fill(_start, storage_start + count, value);
+			return (storage_start);
+		}
+		void	_range_destroy(pointer first, pointer last){
+			for (; first != last; ++first)
+				_allocator.destroy(first);
 		}
 	}
 
