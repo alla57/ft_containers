@@ -178,13 +178,14 @@ namespace ft
 			_allocator.construct(pos, value);
 		}
 		void	_insert(pointer pos, const value_type& value){
-			if (pos != _first)
-				--pos;
-			value_type tmp = value;
-			for (; pos != end; ++pos)
+			if (pos == _finish)
+				_construct(_finish++, value);
+			else
 			{
-				tmp = *pos;
-				*pos = tmp;
+				_construct(_finish, *(_finish - 1));
+				++_finish;
+				std::copy_backward(iterator(pos), iterator(_finish - 2), _finish);
+				*pos = value;
 			}
 		}
 		void	_realloc_and_insert(pointer pos, const value_type& value)
