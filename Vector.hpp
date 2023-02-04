@@ -111,17 +111,9 @@ namespace ft
 		iterator insert( const_iterator pos, const T& value ){
 			const size_type pos_index = pos - begin();
 			if (_finish != _end_of_storage)
-			{
-				if (pos == end())
-				{
-					_construct(_finish, value);
-					++_finish;
-				}
-				else
-					_insert(pos, value);
-			}
+				_insert(pos.base(), value);
 			else
-				_realloc_insert(pos, value);
+				_realloc_insert(pos.base(), value);
 			return iterator(_start + pos_index);
 		}
 		iterator insert( const_iterator pos, size_type count, const T& value );
