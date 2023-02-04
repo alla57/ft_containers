@@ -116,7 +116,9 @@ namespace ft
 				_realloc_insert(pos.base(), value);
 			return iterator(_start + pos_index);
 		}
-		iterator insert( const_iterator pos, size_type count, const T& value );
+		iterator insert( const_iterator pos, size_type count, const T& value ){
+
+		}
 		template< class InputIt >
 		iterator insert( const_iterator pos, InputIt first, InputIt last );
 		iterator erase( iterator pos );
@@ -194,6 +196,19 @@ namespace ft
 			_start = tmp_start;
 			_end_of_storage = _start + new_capacity;
 			_finish = _start + old_size + 1;
+		}
+		void	_fill_insert(pointer pos, const value_type& value, size_type elm_to_add) {
+			if (elm_to_add == 0)
+				return ;
+			size_type available_storage = _end_of_storage - _finish;
+			size_type elm_until_end = _finish - pos;
+			if (elm_to_add <= available_storage)
+			{
+				if (elm_to_add <= elm_until_end)
+				{
+					
+				}
+			}
 		}
 	}
 
