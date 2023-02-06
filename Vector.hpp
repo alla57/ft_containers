@@ -134,7 +134,10 @@ namespace ft
 			}
 			return iterator(_start);
 		}
-		iterator erase( iterator pos );
+
+		iterator erase( iterator pos ){
+			_erase();
+		}
 		iterator erase( iterator first, iterator last );
 		void push_back( const T& value );
 		void pop_back();
@@ -273,6 +276,10 @@ namespace ft
 			}
 			else
 				_range_realloc_and_insert(pos, first, last);
+		}
+		void	_erase(pointer pos)
+		{
+			if ()
 		}
 	}
 
