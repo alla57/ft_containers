@@ -113,11 +113,10 @@ namespace ft
 			if (_finish != _end_of_storage)
 				_insert(pos.base(), value);
 			else
-				_realloc_insert(pos.base(), value);
+				_realloc_and_insert_n(pos.base(), 1, value);
 			return iterator(_start + pos_index);
 		}
 		iterator insert( const_iterator pos, size_type count, const T& value ){
-
 		}
 		template< class InputIt >
 		iterator insert( const_iterator pos, InputIt first, InputIt last );
@@ -182,33 +181,44 @@ namespace ft
 				*pos = value;
 			}
 		}
-		void	_realloc_and_insert(pointer pos, const value_type& value)
+		void	_realloc_and_insert_n(pointer pos, const size_type count, const value_type& value)
 		{
-			size_type new_capacity = _check_length(1);
-			pointer tmp_start = _allocate(new_cap);
+			size_type new_capacity = _check_length(count);
+			pointer tmp_start = _allocate(new_capacity);
 			size_type old_size = size();
-			size_type new_pos = pos - _start;
+			size_type pos_index = pos - _start;
 			std::uninitialized_copy(_start, pos, tmp_start);
-			_construct(tmp_start + new_pos, value);
-			std::uninitialized_copy(pos, _finish, tmp_start + pos + 1);
+			std::uninitialized_fill_n(tmp_start + pos_index, count, value);
+			std::uninitialized_copy(pos, _finish, tmp_start + pos + count);
 			_range_destroy(_start, _finish);
-			_deallocate(_start, _end_of_storage - start);
+			_deallocate(_start, _end_of_storage - _start);
 			_start = tmp_start;
 			_end_of_storage = _start + new_capacity;
-			_finish = _start + old_size + 1;
+			_finish = _start + old_size + count;
 		}
-		void	_fill_insert(pointer pos, const value_type& value, size_type elm_to_add) {
-			if (elm_to_add == 0)
+		void	_fill_insert(pointer pos, const value_type& value, const size_type count) {
+			if (count == 0)
 				return ;
 			size_type available_storage = _end_of_storage - _finish;
 			size_type elm_until_end = _finish - pos;
-			if (elm_to_add <= available_storage)
+			if (count <= available_storage)
 			{
-				if (elm_to_add <= elm_until_end)
+				if (count <= elm_until_end)
 				{
-					
+					std::uninitialized_copy(_finish - count, _finish, _finish);
+					std::copy_backward(pos, _finish - count, _finish);
+					std::fill_n(pos, count, value);
 				}
+				else
+				{
+					std::uninitialized_copy(pos, _finish, pos + count);
+					std::fill_n(pos, elm_until_end, value);
+					std::uninitialized_fill_n(_finish, count - elm_until_end, value);
+				}
+				_finish += count;
 			}
+			else
+				_realloc_and_insert_n(pos, count, value);
 		}
 	}
 
