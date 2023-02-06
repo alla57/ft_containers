@@ -117,9 +117,23 @@ namespace ft
 			return iterator(_start + pos_index);
 		}
 		iterator insert( const_iterator pos, size_type count, const T& value ){
+			if (count == 0)
+				return (pos);
+			_fill_insert(pos, count, value);
+			return iterator(_start);
 		}
 		template< class InputIt >
-		iterator insert( const_iterator pos, InputIt first, InputIt last );
+		iterator insert( const_iterator pos, InputIt first, InputIt last ){
+			if (typename ft::is_integral<InputIt>)
+				return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
+			else
+			{
+				if (first == last)
+					return pos;
+				_range_insert(pos, first.base(), last.base());
+			}
+			return iterator(_start);
+		}
 		iterator erase( iterator pos );
 		iterator erase( iterator first, iterator last );
 		void push_back( const T& value );
@@ -189,14 +203,14 @@ namespace ft
 			size_type pos_index = pos - _start;
 			std::uninitialized_copy(_start, pos, tmp_start);
 			std::uninitialized_fill_n(tmp_start + pos_index, count, value);
-			std::uninitialized_copy(pos, _finish, tmp_start + pos + count);
+			std::uninitialized_copy(pos, _finish, tmp_start + pos_index + count);
 			_range_destroy(_start, _finish);
 			_deallocate(_start, _end_of_storage - _start);
 			_start = tmp_start;
 			_end_of_storage = _start + new_capacity;
 			_finish = _start + old_size + count;
 		}
-		void	_fill_insert(pointer pos, const value_type& value, const size_type count) {
+		void	_fill_insert(pointer pos, const size_type count, const value_type& value) {
 			if (count == 0)
 				return ;
 			size_type available_storage = _end_of_storage - _finish;
@@ -219,6 +233,46 @@ namespace ft
 			}
 			else
 				_realloc_and_insert_n(pos, count, value);
+		}
+		void	_range_realloc_and_insert(pointer pos, pointer first, pointer last){
+			size_type count = last - first;
+			size_type new_capacity = _check_length(count);
+			pointer tmp_start = _allocate(new_capacity);
+			size_type old_size = size();
+			size_type pos_index = pos - _start;
+			std::uninitialized_copy(_start, pos, tmp_start);
+			std::uninitialized_copy(first, last, tmp_start + pos_index);
+			std::uninitialized_copy(pos, _finish, tmp_start + pos_index + count);
+			_range_destroy(_start, _finish);
+			_deallocate(_start, _end_of_storage - _start);
+			_start = tmp_start;
+			_end_of_storage = _start + new_capacity;
+			_finish = _start + old_size + count;
+		}
+		void	_range_insert(pointer pos, pointer first, pointer last){
+			if (first == last)
+				return ;
+			size_type available_storage = _end_of_storage - _finish;
+			size_type elm_until_end = _finish - pos;
+			size_type count = last - first;
+			if (count <= available_storage)
+			{
+				if (count <= elm_until_end)
+				{
+					std::uninitialized_copy(_finish - count, _finish, _finish);
+					std::copy_backward(pos, _finish - count, _finish);
+					std::copy(first, last, pos);
+				}
+				else
+				{
+					std::uninitialized_copy(pos, _finish, pos + count);
+					std::copy(first, first + elm_until_end, pos);
+					std::uninitialized_copy(first + elm_until_end, last, _finish);
+				}
+				_finish += count;
+			}
+			else
+				_range_realloc_and_insert(pos, first, last);
 		}
 	}
 
