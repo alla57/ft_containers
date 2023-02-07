@@ -61,11 +61,16 @@ namespace ft
 	//		MEMBER FUNCTIONS
 		void assign(size_type count, const T& value){
 			clear();
-			
+			insert(_start, count, value);
 		}
 		template<class InputIt>
-		void assign(InputIt first, InputIt last);
-		allocator_type get_allocator() const; // std:: ????
+		void assign(InputIt first, InputIt last){
+			clear();
+			insert(_start, first, last);
+		}
+		allocator_type get_allocator() const{
+			return allocator_type();
+		}
 
 	//		ELEMENT ACCESS
 		reference at( size_type pos );
