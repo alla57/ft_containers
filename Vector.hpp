@@ -58,31 +58,57 @@ namespace ft
 	//		ASSIGNEMENT OPERATOR OVERLOAD
 		vector& operator=(const vector& other);
 
+
 	//		MEMBER FUNCTIONS
 		void assign(size_type count, const T& value){
 			clear();
 			insert(_start, count, value);
 		}
+
 		template<class InputIt>
 		void assign(InputIt first, InputIt last){
 			clear();
 			insert(_start, first, last);
 		}
+
 		allocator_type get_allocator() const{
 			return allocator_type();
 		}
 
+
 	//		ELEMENT ACCESS
-		reference at( size_type pos );
-		const_reference at( size_type pos ) const;
-		reference operator[]( size_type pos );
-		const_reference operator[]( size_type pos ) const;
-		reference front();
-		const_reference front() const;
-		reference back();
-		const_reference back() const;
-		T* data();
-		const T* data() const;
+		reference at( size_type pos ) {
+			_check_range(pos);
+			return ((*this)[pos]);
+		}
+		const_reference at( size_type pos ) const {
+			_check_range(pos);
+			return ((*this)[pos]);
+		}
+		reference operator[]( size_type pos ) {
+			return *(_start + pos);
+		}
+		const_reference operator[]( size_type pos ) const{
+			return *(_start + pos);
+		}
+		reference front() {
+			return *(begin());
+		}
+		const_reference front() const {
+			return *(begin());
+		}
+		reference back() {
+			return *(end() - 1);
+		}
+		const_reference back() const {
+			return *(end() - 1);
+		}
+		T* data() {
+			return (_start);
+		}
+		const T* data() const {
+			return (_start);
+		}
 
 	//		ITERATORS
 		iterator begin() {return iterator(_start);}
@@ -310,6 +336,11 @@ namespace ft
 			std::copy(last, _finish, first);
 			_range_destroy(_finish - count, _finish);
 			_finish -= count;
+		}
+		void	_check_range(const size_type n)
+		{
+			if (n >= size())
+				throw (std::out_of_range("vector::_check_range: n is out of boundaries"));
 		}
 	}
 
