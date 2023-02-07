@@ -56,7 +56,12 @@ namespace ft
 		}
 
 	//		ASSIGNEMENT OPERATOR OVERLOAD
-		vector& operator=(const vector& other);
+		vector& operator=(const vector& other) {
+			if (*this == other)
+				return;
+			assign(other.begin(), other.end());
+			return (*this);
+		}
 
 
 	//		MEMBER FUNCTIONS
