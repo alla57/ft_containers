@@ -4,6 +4,7 @@
 #include <memory>
 #include <exception>
 #include <iostream>
+#include <algorithm>
 
 #include "Iterator.hpp"
 
@@ -49,7 +50,10 @@ namespace ft
 		vector(const vector& other){*this = other;}
 
 	//		DESTRUCTOR
-		~vector();
+		~vector(){
+			clear();
+			_deallocate(_start, _end_of_storage - _start);
+		}
 
 	//		ASSIGNEMENT OPERATOR OVERLOAD
 		vector& operator=(const vector& other);
@@ -136,12 +140,30 @@ namespace ft
 		}
 
 		iterator erase( iterator pos ){
-			_erase();
+			_range_erase(pos.base(), pos.base() + 1);
+			return (pos);
 		}
-		iterator erase( iterator first, iterator last );
-		void push_back( const T& value );
-		void pop_back();
-		void resize( size_type count, T value = T() );
+
+		iterator erase( iterator first, iterator last ){
+			if (first != last)
+				_range_erase(first.base(), last.base());
+			return (first);
+		}
+
+		void push_back( const T& value ){
+			insert(_finish, value);
+		}
+
+		void pop_back(){
+			erase(iterator(_finish - 1));
+		}
+
+		void resize( size_type count, T value = T() ){
+			if (count > size())
+				insert(_finish, count - size(), value);
+			else
+				erase(iterator(_start + count), iteratro(_finish));
+		}
 		void swap( vector& other );
 
 	private :
@@ -277,9 +299,12 @@ namespace ft
 			else
 				_range_realloc_and_insert(pos, first, last);
 		}
-		void	_erase(pointer pos)
+		void	_range_erase(pointer first, pointer last)
 		{
-			if ()
+			size_type count = last - first;
+			std::copy(last, _finish, first);
+			_range_destroy(_finish - count, _finish);
+			_finish -= count;
 		}
 	}
 
@@ -302,9 +327,9 @@ namespace ft
 
 //		CONSTRUCTORS DEFINITION
 
-template<class T, class Allocator = std::allocator<T> >
-Vector<T, Allocator>::Vector(const Allocator& alloc = Allocator())
-{
-}
+// template<class T, class Allocator = std::allocator<T> >
+// Vector<T, Allocator>::Vector(const Allocator& alloc = Allocator())
+// {
+// }
 
 #endif
