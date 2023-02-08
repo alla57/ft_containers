@@ -72,6 +72,13 @@ namespace ft
 	// 							IS_INTEGRAL
 	template<class T>
 	struct is_integral : public is_integral_helper<typename remove_cv<T>::type>{};
+
+	// 					IS_SAME
+	template<typename T, typename U>
+	struct is_same : false_type{};
+
+	template<typename T>
+	struct is_same<T, T> : true_type{};
 };
 
 #endif

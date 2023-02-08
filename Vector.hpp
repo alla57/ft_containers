@@ -8,6 +8,7 @@
 
 #include "Iterator.hpp"
 #include "Algorithm.hpp"
+#include "TypeTraits.hpp"
 
 namespace ft
 {
@@ -39,7 +40,7 @@ namespace ft
 		}
 		template<class InputIt>
 		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
-			if (typename ft::is_integral<InputIt>)
+			if (typename ft::is_integral<InputIt>())
 				{
 					_start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
 					_end_of_storage = _start + static_cast<size_type>(first);
@@ -149,23 +150,24 @@ namespace ft
 			_range_destroy(_start, _finish);
 			_finish = _start;
 		}
-		iterator insert( const_iterator pos, const T& value ){
+		iterator insert( iterator pos, const T& value ){
 			const size_type pos_index = pos - begin();
 			if (_finish != _end_of_storage)
 				_insert(pos.base(), value);
 			else
-				_realloc_and_insert_n(pos.base(), 1, value);
+				_realloc_and_insert_n(pos, 1, value);
 			return iterator(_start + pos_index);
 		}
-		iterator insert( const_iterator pos, size_type count, const T& value ){
+		iterator insert( iterator pos, size_type count, const T& value ){
 			if (count == 0)
 				return (pos);
 			_fill_insert(pos, count, value);
 			return iterator(_start);
 		}
+		// ft::enable_if<ft::is_integral<InputIt>, InputIt>::type
 		template< class InputIt >
-		iterator insert( const_iterator pos, InputIt first, InputIt last ){
-			if (typename ft::is_integral<InputIt>)
+		iterator insert( iterator pos, InputIt first, InputIt last ){
+			if (typename ft::is_integral<InputIt>())
 				return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
 			else
 			{
@@ -238,7 +240,7 @@ namespace ft
 			return (storage_start);
 		}
 		void	_deallocate(pointer start, std::size_t count){
-			alloc.deallocate(start, count);
+			_allocator.deallocate(start, count);
 		}
 		pointer	_allocate_and_initialize(size_type count, const value_type& value){
 			pointer storage_start = _allocate(count);
@@ -252,26 +254,26 @@ namespace ft
 		void	_construct(pointer pos, const value_type& value){
 			_allocator.construct(pos, value);
 		}
-		void	_insert(pointer pos, const value_type& value){
-			if (pos == _finish)
+		void	_insert(iterator pos, const value_type& value){
+			if (pos.base() == _finish)
 				_construct(_finish++, value);
 			else
 			{
 				_construct(_finish, *(_finish - 1));
 				++_finish;
-				std::copy_backward(iterator(pos), iterator(_finish - 2), _finish);
+				std::copy_backward(pos, iterator(_finish - 2), iterator(_finish));
 				*pos = value;
 			}
 		}
-		void	_realloc_and_insert_n(pointer pos, const size_type count, const value_type& value)
+		void	_realloc_and_insert_n(iterator pos, const size_type count, const value_type& value)
 		{
 			size_type new_capacity = _check_length(count);
 			pointer tmp_start = _allocate(new_capacity);
 			size_type old_size = size();
-			size_type pos_index = pos - _start;
-			std::uninitialized_copy(_start, pos, tmp_start);
+			size_type pos_index = pos.base() - _start;
+			std::uninitialized_copy(_start, pos.base(), tmp_start);
 			std::uninitialized_fill_n(tmp_start + pos_index, count, value);
-			std::uninitialized_copy(pos, _finish, tmp_start + pos_index + count);
+			std::uninitialized_copy(pos.base(), _finish, tmp_start + pos_index + count);
 			_range_destroy(_start, _finish);
 			_deallocate(_start, _end_of_storage - _start);
 			_start = tmp_start;
@@ -354,7 +356,7 @@ namespace ft
 			if (n >= size())
 				throw (std::out_of_range("vector::_check_range: n is out of boundaries"));
 		}
-	}
+	};
 }
 
 //		CONSTRUCTORS DEFINITION
@@ -375,7 +377,7 @@ bool operator!=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs 
 }
 template< class T, class Alloc >
 bool operator<( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
-	return (ft::lexicographical_comapre(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 }
 template< class T, class Alloc >
 bool operator<=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){

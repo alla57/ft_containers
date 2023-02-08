@@ -150,7 +150,7 @@ namespace ft
 		normal_iterator() : current(Iter()){}
 		normal_iterator(const Iter& i) : current(i){}
 		template<typename U>
-		normal_iterator(const normal_iterator<U> & i) : current(i.base()){}
+		normal_iterator(const ft::enable_if< ft::is_same<U, Iter>::value, normal_iterator<U> >::type & i) : current(i.base()){}
 
 		//		Assignement Operator Overload
 		template<class U>
