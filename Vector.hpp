@@ -57,8 +57,8 @@ namespace ft
 
 	//		ASSIGNEMENT OPERATOR OVERLOAD
 		vector& operator=(const vector& other) {
-			if (*this == other)
-				return;
+			if (this == &other)
+				return (*this);
 			assign(other.begin(), other.end());
 			return (*this);
 		}
@@ -200,7 +200,13 @@ namespace ft
 			else
 				erase(iterator(_start + count), iteratro(_finish));
 		}
-		void swap( vector& other );
+		void swap( vector& other ){
+			if (this == &other)
+				return;
+			std::swap(_start, other._start);
+			std::swap(_finish, other.finish);
+			std::swap(_end_of_storage, other._end_of_storage);
+		}
 
 	private :
 		allocator_type	_allocator;
