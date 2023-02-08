@@ -1,6 +1,8 @@
 #ifndef ITERATOR_HPP
 # define ITERATOR_HPP
 
+#include "TypeTraits.hpp"
+
 namespace ft
 {
 	//									ITERATOR TAGS
@@ -150,7 +152,7 @@ namespace ft
 		normal_iterator() : current(Iter()){}
 		normal_iterator(const Iter& i) : current(i){}
 		template<typename U>
-		normal_iterator(const ft::enable_if< ft::is_same<U, Iter>::value, normal_iterator<U> >::type & i) : current(i.base()){}
+		normal_iterator(const typename ft::enable_if< ft::is_same<U, Iter>::value, normal_iterator<U> >::type & i) : current(i.base()){}
 
 		//		Assignement Operator Overload
 		template<class U>

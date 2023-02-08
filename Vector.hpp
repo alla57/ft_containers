@@ -227,11 +227,16 @@ namespace ft
 		// optimizable if we add a specialization of forward iterator
 		// maybe it should throw if error in push_back process
 		template<class InputIt>
-		void	_range_initialize(InputIt first, InputIt last){
+		void	_range_initialize(InputIt first, InputIt last, ft::true_type){
 			for (; first != last; ++first)
 			{
 				push_back(*first);
 			}
+		}
+		void	_range_initialize(size_type count, const value_type& value = value_type()){
+			_start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
+			_end_of_storage = _start + static_cast<size_type>(first);
+			_finish = _end_of_storage;
 		}
 		pointer	_allocate(size_type count){
 			if (count > _allocator.max_size())
