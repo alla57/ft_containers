@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include "Iterator.hpp"
+#include "Algorithm.hpp"
 
 namespace ft
 {
@@ -354,22 +355,6 @@ namespace ft
 				throw (std::out_of_range("vector::_check_range: n is out of boundaries"));
 		}
 	}
-
-	//		NON-MEMBER FUNCTIONS
-	template< class T, class Alloc >
-	bool operator==( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs );
-	template< class T, class Alloc >
-	bool operator!=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs );
-	template< class T, class Alloc >
-	bool operator<( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs );
-	template< class T, class Alloc >
-	bool operator<=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs );
-	template< class T, class Alloc >
-	bool operator>( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs );
-	template< class T, class Alloc >
-	bool operator>=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs );
-	template< class T, class Alloc >
-	void swap( ft::vector<T,Alloc>& lhs, ft::vector<T,Alloc>& rhs );
 }
 
 //		CONSTRUCTORS DEFINITION
@@ -378,5 +363,35 @@ namespace ft
 // Vector<T, Allocator>::Vector(const Allocator& alloc = Allocator())
 // {
 // }
+
+//								NON-MEMBER FUNCTIONS
+template< class T, class Alloc >
+bool operator==( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+	return lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+template< class T, class Alloc >
+bool operator!=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+	return !(lhs == rhs);
+}
+template< class T, class Alloc >
+bool operator<( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+	return (ft::lexicographical_comapre(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+}
+template< class T, class Alloc >
+bool operator<=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+	return (lhs < rhs || lhs == rhs);
+}
+template< class T, class Alloc >
+bool operator>( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+	return !(lhs <= rhs);
+}
+template< class T, class Alloc >
+bool operator>=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+	return !(lhs < rhs);
+}
+template< class T, class Alloc >
+void swap( ft::vector<T,Alloc>& lhs, ft::vector<T,Alloc>& rhs ){
+	return (lhs.swap(rhs));
+}
 
 #endif
