@@ -5,6 +5,12 @@
 
 namespace ft
 {
+	// 									ITERATOR CATEGORY
+	// template<typename Iter>
+	// typename ft::iterator_traits<Iter>::iterator_category iterator_category(const Iter&){
+	// 	return typename ft::iterator_traits<Iter>::iterator_category();
+	// }
+
 	//									ITERATOR TAGS
 	struct input_iterator_tag{};
 	struct output_iterator_tag{};

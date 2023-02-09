@@ -32,23 +32,34 @@ namespace ft
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	//		CONSTRUCTORS
-		explicit vector(const Allocator& alloc = Allocator()) : _allocator(alloc){}
+		explicit vector(const Allocator& alloc = Allocator()) : _allocator(alloc), _start(), _finish(), _end_of_storage(){}
 		explicit vector(size_type count, const value_type& value = value_type(), const allocator_type& alloc = allocator_type()) : _allocator(alloc){
 			_start = _allocate_and_initialize(count, value);
 			_end_of_storage = _start + count;
 			_finish = _end_of_storage;
 		}
+		// template<class InputIt>
+		// vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
+		// 	if (ft::is_integral<InputIt>::value)
+		// 		{
+		// 			_start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
+		// 			_end_of_storage = _start + static_cast<size_type>(first);
+		// 			_finish = _end_of_storage;
+		// 		}
+		// 	else
+		// 		_range_initialize(first, last);
+		// }
 		template<class InputIt>
-		vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
-			if (typename ft::is_integral<InputIt>())
-				{
-					_start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
-					_end_of_storage = _start + static_cast<size_type>(first);
-					_finish = _end_of_storage;
-				}
-			else
-				_range_initialize(first, last);
-		}
+vector(typename ft::enable_if<ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc) {
+  _start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
+  _end_of_storage = _start + static_cast<size_type>(first);
+  _finish = _end_of_storage;
+}
+
+template<class InputIt>
+vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc) {
+  _range_initialize(first, last);
+}
 		vector(const vector& other){*this = other;}
 
 	//		DESTRUCTOR
@@ -165,16 +176,28 @@ namespace ft
 			return iterator(_start);
 		}
 		// ft::enable_if<ft::is_integral<InputIt>, InputIt>::type
+		// template< class InputIt >
+		// iterator insert( iterator pos, InputIt first, InputIt last ){
+		// 	if (typename ft::is_integral<InputIt>())
+		// 		return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
+		// 	else
+		// 	{
+		// 		if (first == last)
+		// 			return pos;
+		// 		_range_insert(pos, first.base(), last.base());
+		// 	}
+		// 	return iterator(_start);
+		// }
 		template< class InputIt >
-		iterator insert( iterator pos, InputIt first, InputIt last ){
-			if (typename ft::is_integral<InputIt>())
-				return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
-			else
-			{
-				if (first == last)
-					return pos;
-				_range_insert(pos, first.base(), last.base());
-			}
+		iterator insert( iterator pos, typename ft::enable_if<ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last ){
+			return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
+		}
+		template< class InputIt >
+		iterator insert( iterator pos, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last ){
+			if (first == last)
+				return pos;
+			vector tmp(first, last);
+			_range_insert(pos, tmp.begin(), tmp.last());
 			return iterator(_start);
 		}
 
@@ -189,8 +212,8 @@ namespace ft
 			return (first);
 		}
 
-		void push_back( const T& value ){
-			insert(_finish, value);
+		void push_back( const T value ){
+			insert(iterator(_finish), value);
 		}
 
 		void pop_back(){
@@ -227,17 +250,19 @@ namespace ft
 		// optimizable if we add a specialization of forward iterator
 		// maybe it should throw if error in push_back process
 		template<class InputIt>
-		void	_range_initialize(InputIt first, InputIt last, ft::true_type){
+		void	_range_initialize(InputIt first, InputIt last/*, ft::true_type*/){
 			for (; first != last; ++first)
 			{
 				push_back(*first);
 			}
 		}
-		void	_range_initialize(size_type count, const value_type& value = value_type()){
-			_start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
-			_end_of_storage = _start + static_cast<size_type>(first);
-			_finish = _end_of_storage;
-		}
+		// template<typename Integral>
+		// void	_initialize_dispatch(Integral count, )
+		// void	_fill_initialize(size_type count, const value_type& value){
+		// 	_start = _allocate_and_initialize(count, value);
+		// 	_end_of_storage = _start + count;
+		// 	_finish = _end_of_storage;
+		// }
 		pointer	_allocate(size_type count){
 			if (count > _allocator.max_size())
 				throw(std::length_error("cannot create std::vector larger than max_size()"));
@@ -324,11 +349,12 @@ namespace ft
 			_end_of_storage = _start + new_capacity;
 			_finish = _start + old_size + count;
 		}
-		void	_range_insert(pointer pos, pointer first, pointer last){
+		template<class InputIt>
+		void	_range_insert(iterator pos, InputIt first, InputIt last){
 			if (first == last)
 				return ;
 			size_type available_storage = _end_of_storage - _finish;
-			size_type elm_until_end = _finish - pos;
+			size_type elm_until_end = _finish - pos.base();
 			size_type count = last - first;
 			if (count <= available_storage)
 			{
@@ -362,43 +388,41 @@ namespace ft
 				throw (std::out_of_range("vector::_check_range: n is out of boundaries"));
 		}
 	};
-}
+	//		CONSTRUCTORS DEFINITION
 
-//		CONSTRUCTORS DEFINITION
+	// template<class T, class Allocator = std::allocator<T> >
+	// Vector<T, Allocator>::Vector(const Allocator& alloc = Allocator())
+	// {
+	// }
 
-// template<class T, class Allocator = std::allocator<T> >
-// Vector<T, Allocator>::Vector(const Allocator& alloc = Allocator())
-// {
-// }
-
-//								NON-MEMBER FUNCTIONS
-template< class T, class Alloc >
-bool operator==( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
-	return lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+	//								NON-MEMBER FUNCTIONS
+	template< class T, class Alloc >
+	bool operator==( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+		return lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
+	template< class T, class Alloc >
+	bool operator!=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+		return !(lhs == rhs);
+	}
+	template< class T, class Alloc >
+	bool operator<( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+	template< class T, class Alloc >
+	bool operator<=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+		return (lhs < rhs || lhs == rhs);
+	}
+	template< class T, class Alloc >
+	bool operator>( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+		return !(lhs <= rhs);
+	}
+	template< class T, class Alloc >
+	bool operator>=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
+		return !(lhs < rhs);
+	}
+	template< class T, class Alloc >
+	void swap( ft::vector<T,Alloc>& lhs, ft::vector<T,Alloc>& rhs ){
+		return (lhs.swap(rhs));
+	}
 }
-template< class T, class Alloc >
-bool operator!=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
-	return !(lhs == rhs);
-}
-template< class T, class Alloc >
-bool operator<( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
-	return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
-}
-template< class T, class Alloc >
-bool operator<=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
-	return (lhs < rhs || lhs == rhs);
-}
-template< class T, class Alloc >
-bool operator>( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
-	return !(lhs <= rhs);
-}
-template< class T, class Alloc >
-bool operator>=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){
-	return !(lhs < rhs);
-}
-template< class T, class Alloc >
-void swap( ft::vector<T,Alloc>& lhs, ft::vector<T,Alloc>& rhs ){
-	return (lhs.swap(rhs));
-}
-
 #endif

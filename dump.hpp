@@ -16,3 +16,30 @@ void	_realloc_and_insert(pointer pos, const value_type& value)
 			_end_of_storage = _start + new_capacity;
 			_finish = _start + old_size + 1;
 		}
+		
+template<class InputIt>
+		void	_range_insert(iterator pos, InputIt first, InputIt last){
+			if (first == last)
+				return ;
+			size_type available_storage = _end_of_storage - _finish;
+			size_type elm_until_end = _finish - pos.base();
+			size_type count = last - first;
+			if (count <= available_storage)
+			{
+				if (count <= elm_until_end)
+				{
+					std::uninitialized_copy(_finish - count, _finish, _finish);
+					std::copy_backward(pos, _finish - count, _finish);
+					std::copy(first, last, pos);
+				}
+				else
+				{
+					std::uninitialized_copy(pos, _finish, pos + count);
+					std::copy(first, first + elm_until_end, pos);
+					std::uninitialized_copy(first + elm_until_end, last, _finish);
+				}
+				_finish += count;
+			}
+			else
+				_range_realloc_and_insert(pos, first, last);
+		}
