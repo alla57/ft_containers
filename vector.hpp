@@ -355,7 +355,9 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 				return ;
 			size_type available_storage = _end_of_storage - _finish;
 			size_type elm_until_end = _finish - pos.base();
-			size_type count = last - first;
+			size_type count = 0;
+			for (InputIt tmp_it = first; tmp_it != last; ++tmp_it)
+				++count;
 			if (count <= available_storage)
 			{
 				if (count <= elm_until_end)
