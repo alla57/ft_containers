@@ -2,15 +2,10 @@
 # define ITERATOR_HPP
 
 #include "TypeTraits.hpp"
+#include <iterator>
 
 namespace ft
 {
-	// 									ITERATOR CATEGORY
-	// template<typename Iter>
-	// typename ft::iterator_traits<Iter>::iterator_category iterator_category(const Iter&){
-	// 	return typename ft::iterator_traits<Iter>::iterator_category();
-	// }
-
 	//									ITERATOR TAGS
 	struct input_iterator_tag{};
 	struct output_iterator_tag{};
@@ -48,6 +43,17 @@ namespace ft
 		typedef const T&						reference;
 		typedef ft::random_access_iterator_tag	iterator_category;
 	};
+
+	// 									ITERATOR CATEGORY
+	template<typename Iter>
+	typename ft::iterator_traits<Iter>::iterator_category iterator_category(const Iter&){
+		return typename ft::iterator_traits<Iter>::iterator_category();
+	}
+
+	template<typename Iter>
+	typename std::iterator_traits<Iter>::iterator_category iterator_category(const Iter&){
+		return typename std::iterator_traits<Iter>::iterator_category();
+	}
 
 	//									ITERATOR
 	template<class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
