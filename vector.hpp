@@ -6,9 +6,9 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Iterator.hpp"
-#include "Algorithm.hpp"
-#include "TypeTraits.hpp"
+#include "iterator.hpp"
+#include "algorithm.hpp"
+#include "type_traits.hpp"
 
 namespace ft
 {

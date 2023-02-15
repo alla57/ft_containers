@@ -1,7 +1,7 @@
 #ifndef ITERATOR_HPP
 # define ITERATOR_HPP
 
-#include "TypeTraits.hpp"
+#include "type_traits.hpp"
 #include <iterator>
 
 namespace ft
