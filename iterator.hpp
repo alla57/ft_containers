@@ -50,11 +50,6 @@ namespace ft
 		return typename ft::iterator_traits<Iter>::iterator_category();
 	}
 
-	template<typename Iter>
-	typename std::iterator_traits<Iter>::iterator_category iterator_category(const Iter&){
-		return typename std::iterator_traits<Iter>::iterator_category();
-	}
-
 	//									ITERATOR
 	template<class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
 	struct iterator

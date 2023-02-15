@@ -167,27 +167,26 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 				_insert(pos.base(), value);
 			else
 				_realloc_and_insert_n(pos, 1, value);
-			return iterator(_start + pos_index);
+			return (begin() + pos_index);
 		}
 		iterator insert( iterator pos, size_type count, const T& value ){
 			if (count == 0)
 				return (pos);
 			_fill_insert(pos, count, value);
+			return begin();
+		}
+		template< class InputIt >
+		iterator insert( iterator pos, InputIt first, InputIt last ){
+			if (typename ft::is_integral<InputIt>())
+				return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
+			else
+			{
+				if (first == last)
+					return pos;
+				_range_insert(pos, first.base(), last.base());
+			}
 			return iterator(_start);
 		}
-		// ft::enable_if<ft::is_integral<InputIt>, InputIt>::type
-		// template< class InputIt >
-		// iterator insert( iterator pos, InputIt first, InputIt last ){
-		// 	if (typename ft::is_integral<InputIt>())
-		// 		return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
-		// 	else
-		// 	{
-		// 		if (first == last)
-		// 			return pos;
-		// 		_range_insert(pos, first.base(), last.base());
-		// 	}
-		// 	return iterator(_start);
-		// }
 		template< class InputIt >
 		iterator insert( iterator pos, typename ft::enable_if<ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last ){
 			return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
@@ -300,10 +299,10 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			size_type new_capacity = _check_length(count);
 			pointer tmp_start = _allocate(new_capacity);
 			size_type old_size = size();
-			size_type pos_index = pos.base() - _start;
-			std::uninitialized_copy(_start, pos.base(), tmp_start);
+			size_type pos_index = pos - begin();
+			std::uninitialized_copy(_start, pos, tmp_start);
 			std::uninitialized_fill_n(tmp_start + pos_index, count, value);
-			std::uninitialized_copy(pos.base(), _finish, tmp_start + pos_index + count);
+			std::uninitialized_copy(pos, _finish, tmp_start + pos_index + count);
 			_range_destroy(_start, _finish);
 			_deallocate(_start, _end_of_storage - _start);
 			_start = tmp_start;
@@ -313,7 +312,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 		void	_fill_insert(pointer pos, const size_type count, const value_type& value) {
 			if (count == 0)
 				return ;
-			size_type available_storage = _end_of_storage - _finish;
+			size_type available_storage = _end_of_storage - _finish; //maybe we should divide by the size of the value type (check with big objects)
 			size_type elm_until_end = _finish - pos;
 			if (count <= available_storage)
 			{
@@ -389,6 +388,10 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			if (n >= size())
 				throw (std::out_of_range("vector::_check_range: n is out of boundaries"));
 		}
+		template<typename Integral, >
+		void	_insert_dispatch()
+		template<typename InputIt>
+		void	_insert_dispatch()
 	};
 	//		CONSTRUCTORS DEFINITION
 
