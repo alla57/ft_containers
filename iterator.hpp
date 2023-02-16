@@ -11,7 +11,7 @@ namespace ft
 	struct output_iterator_tag{};
 	struct forward_iterator_tag : public input_iterator_tag{};
 	struct bidirectional_iterator_tag : public forward_iterator_tag{};
-	struct random_access_iterator_tag : public bidirectional_iterator_tag{};
+	struct random_access_iterator_tag : public bidirectional_iterator_tag, std::random_access_iterator_tag{};
 
 	//									ITERATOR_TRAITS
 	template<class Iter>
@@ -60,6 +60,23 @@ namespace ft
 		typedef Pointer		pointer;
 		typedef Reference	reference;
 	};
+
+	// 									DISTANCE
+	template<typename It>
+	typename iterator_traits<It>::difference_type	do_distance(It first, It last, ft::random_access_iterator_tag){
+		return (last - first);
+	}
+	template<typename It>
+	typename iterator_traits<It>::difference_type	do_distance(It first, It last, ft::input_iterator_tag){
+		typename iterator_traits<It>::difference_type count = 0;
+		for(; first != last; ++first)
+			++count;
+		return count;
+	}
+	template<typename InputIt>
+	typename iterator_traits<InputIt>::difference_type distance(InputIt first, InputIt last){
+		return do_distance(first, last, typename ft::iterator_traits<InputIt>::iterator_category());
+	}
 
 	//									REVERSE_ITERATOR
 	template<class Iter>

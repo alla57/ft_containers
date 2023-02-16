@@ -57,10 +57,10 @@ vector(typename ft::enable_if<ft::is_integral<InputIt>::value, InputIt>::type fi
 }
 
 template<class InputIt>
-vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc) {
+vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc), _start(), _finish(), _end_of_storage() {
   _range_initialize(first, last);
 }
-		vector(const vector& other){*this = other;}
+		vector(const vector& other) : _allocator(), _start(), _finish(), _end_of_storage(){*this = other;}
 
 	//		DESTRUCTOR
 		~vector(){
@@ -176,54 +176,33 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			return begin();
 		}
 		template< class InputIt >
-		iterator insert( iterator pos, InputIt first, InputIt last ){
-			if (typename ft::is_integral<InputIt>())
-				return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
-			else
-			{
-				if (first == last)
-					return pos;
-				_range_insert(pos, first.base(), last.base());
-			}
-			return iterator(_start);
+		void insert( iterator pos, InputIt first, InputIt last ){
+			_insert_dispatch(pos, first, last, ft::is_integral<InputIt>());
 		}
-		template< class InputIt >
-		iterator insert( iterator pos, typename ft::enable_if<ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last ){
-			return insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
-		}
-		template< class InputIt >
-		iterator insert( iterator pos, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last ){
-			if (first == last)
-				return pos;
-			vector tmp(first, last);
-			_range_insert(pos, tmp.begin(), tmp.last());
-			return iterator(_start);
-		}
-
 		iterator erase( iterator pos ){
-			_range_erase(pos.base(), pos.base() + 1);
+			_range_erase(pos, pos + 1);
 			return (pos);
 		}
 
 		iterator erase( iterator first, iterator last ){
 			if (first != last)
-				_range_erase(first.base(), last.base());
+				_range_erase(first, last);
 			return (first);
 		}
 
 		void push_back( const T value ){
-			insert(iterator(_finish), value);
+			insert(end(), value);
 		}
 
 		void pop_back(){
-			erase(iterator(_finish - 1));
+			erase(end() - 1);
 		}
 
 		void resize( size_type count, T value = T() ){
 			if (count > size())
-				insert(_finish, count - size(), value);
+				insert(end(), count - size(), value);
 			else
-				erase(iterator(_start + count), iteratro(_finish));
+				erase(begin() + count, end());
 		}
 		void swap( vector& other ){
 			if (this == &other)
@@ -300,31 +279,31 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			pointer tmp_start = _allocate(new_capacity);
 			size_type old_size = size();
 			size_type pos_index = pos - begin();
-			std::uninitialized_copy(_start, pos, tmp_start);
+			std::uninitialized_copy(begin(), pos, tmp_start);
 			std::uninitialized_fill_n(tmp_start + pos_index, count, value);
-			std::uninitialized_copy(pos, _finish, tmp_start + pos_index + count);
+			std::uninitialized_copy(pos, end(), tmp_start + pos_index + count);
 			_range_destroy(_start, _finish);
 			_deallocate(_start, _end_of_storage - _start);
 			_start = tmp_start;
 			_end_of_storage = _start + new_capacity;
 			_finish = _start + old_size + count;
 		}
-		void	_fill_insert(pointer pos, const size_type count, const value_type& value) {
+		void	_fill_insert(iterator pos, const size_type count, const value_type& value) {
 			if (count == 0)
 				return ;
 			size_type available_storage = _end_of_storage - _finish; //maybe we should divide by the size of the value type (check with big objects)
-			size_type elm_until_end = _finish - pos;
+			size_type elm_until_end = end() - pos;
 			if (count <= available_storage)
 			{
 				if (count <= elm_until_end)
 				{
 					std::uninitialized_copy(_finish - count, _finish, _finish);
-					std::copy_backward(pos, _finish - count, _finish);
+					std::copy_backward(pos, end() - count, _finish);
 					std::fill_n(pos, count, value);
 				}
 				else
 				{
-					std::uninitialized_copy(pos, _finish, pos + count);
+					std::uninitialized_copy(pos, end(), pos + count);
 					std::fill_n(pos, elm_until_end, value);
 					std::uninitialized_fill_n(_finish, count - elm_until_end, value);
 				}
@@ -333,15 +312,29 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			else
 				_realloc_and_insert_n(pos, count, value);
 		}
-		void	_range_realloc_and_insert(pointer pos, pointer first, pointer last){
-			size_type count = last - first;
+		template<typename InputIt>
+		void	_range_realloc_and_insert(iterator pos, InputIt first, InputIt last, ft::input_iterator_tag){
+			if (pos == end())
+			{
+				for (; first != last; ++first)
+					insert(end(), *first);
+			}
+			else if (first != last)
+			{
+				vector tmp(first, last);
+				insert(pos, begin(), end());
+			}
+		}
+		template<typename ForwardIt>
+		void	_range_realloc_and_insert(iterator pos, ForwardIt first, ForwardIt last, ft::forward_iterator_tag){
+			size_type count = ft::distance(first, last);
 			size_type new_capacity = _check_length(count);
 			pointer tmp_start = _allocate(new_capacity);
 			size_type old_size = size();
-			size_type pos_index = pos - _start;
-			std::uninitialized_copy(_start, pos, tmp_start);
+			size_type pos_index = pos - begin();
+			std::uninitialized_copy(begin(), pos, tmp_start);
 			std::uninitialized_copy(first, last, tmp_start + pos_index);
-			std::uninitialized_copy(pos, _finish, tmp_start + pos_index + count);
+			std::uninitialized_copy(pos, end(), tmp_start + pos_index + count);
 			_range_destroy(_start, _finish);
 			_deallocate(_start, _end_of_storage - _start);
 			_start = tmp_start;
@@ -353,7 +346,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			if (first == last)
 				return ;
 			size_type available_storage = _end_of_storage - _finish;
-			size_type elm_until_end = _finish - pos.base();
+			size_type elm_until_end = end() - pos;
 			size_type count = 0;
 			for (InputIt tmp_it = first; tmp_it != last; ++tmp_it)
 				++count;
@@ -362,36 +355,43 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 				if (count <= elm_until_end)
 				{
 					std::uninitialized_copy(_finish - count, _finish, _finish);
-					std::copy_backward(pos, _finish - count, _finish);
+					std::copy_backward(pos, end() - count, _finish);
 					std::copy(first, last, pos);
 				}
 				else
 				{
-					std::uninitialized_copy(pos, _finish, pos + count);
+					std::uninitialized_copy(pos, end(), pos + count);
 					std::copy(first, first + elm_until_end, pos);
 					std::uninitialized_copy(first + elm_until_end, last, _finish);
 				}
 				_finish += count;
 			}
 			else
-				_range_realloc_and_insert(pos, first, last);
+				_range_realloc_and_insert(pos, first, last, typename ft::iterator_traits<InputIt>::iterator_category());
 		}
-		void	_range_erase(pointer first, pointer last)
+		void	_range_erase(iterator first, iterator last)
 		{
 			size_type count = last - first;
 			std::copy(last, _finish, first);
 			_range_destroy(_finish - count, _finish);
 			_finish -= count;
 		}
-		void	_check_range(const size_type n)
+		void	_check_range(const size_type n) const
 		{
 			if (n >= size())
 				throw (std::out_of_range("vector::_check_range: n is out of boundaries"));
 		}
-		template<typename Integral, >
-		void	_insert_dispatch()
+		template<typename Integral>
+		void	_insert_dispatch(iterator pos, Integral first, Integral last, ft::true_type){
+			insert(pos, static_cast<size_type>(first), static_cast<value_type>(last));
+		}
 		template<typename InputIt>
-		void	_insert_dispatch()
+		void	_insert_dispatch(iterator pos, InputIt first, InputIt last, ft::false_type){
+			if (first == last)
+				return;
+			vector tmp(first, last);
+			_range_insert(pos, tmp.begin(), tmp.end());
+		}
 	};
 	//		CONSTRUCTORS DEFINITION
 
