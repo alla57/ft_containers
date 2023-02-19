@@ -100,11 +100,11 @@ namespace ft
 		reverse_iterator() : current(){}
 		explicit reverse_iterator(iterator_type x) : current(x){}
 		template<class U>
-		reverse_iterator(const reverse_iterator<U>& other) : current(other.current){}
+		reverse_iterator(const reverse_iterator<U>& other) : current(other.base()){}
 
 		//		Assignement Operator Overload
 		template<class U>
-		reverse_iterator& operator=(const reverse_iterator<U>& other){current = other.current; return (*this);}
+		reverse_iterator& operator=(const reverse_iterator<U>& other){current = other.base(); return (*this);}
 
 		//		Member functions
 		iterator_type base() const {return(current);}
@@ -117,10 +117,10 @@ namespace ft
 		reverse_iterator& operator--(){++current; return(*this);}
 		reverse_iterator operator++(int){reverse_iterator tmp = *this; --current; return (tmp);}
 		reverse_iterator operator--(int){reverse_iterator tmp = *this; ++current; return (tmp);}
-		reverse_iterator operator+(difference_type n) const {return (current - n);}
-		reverse_iterator operator-(difference_type n) const {return (current + n);}
-		reverse_iterator& operator+=(difference_type n) const {current -= n; return (*this);}
-		reverse_iterator& operator-=(difference_type n) const {current += n; return (*this);}
+		reverse_iterator operator+(difference_type n) const {return (reverse_iterator(current - n));}
+		reverse_iterator operator-(difference_type n) const {return (reverse_iterator(current + n));}
+		reverse_iterator& operator+=(difference_type n) {current -= n; return (*this);}
+		reverse_iterator& operator-=(difference_type n) {current += n; return (*this);}
 	};
 	//		reverse_iterator Non Members Functions
 	template<class Iterator1, class Iterator2>
@@ -129,30 +129,34 @@ namespace ft
 	}
 	template<class Iterator1, class Iterator2>
 	bool operator!=(const ft::reverse_iterator<Iterator1>& lhs, const ft::reverse_iterator<Iterator2>& rhs){
-		return (lhs.base() == rhs.base());
+		return (lhs.base() != rhs.base());
 	}
 	template<class Iterator1, class Iterator2>
 	bool operator< (const ft::reverse_iterator<Iterator1>& lhs, const ft::reverse_iterator<Iterator2>& rhs){
-		return (lhs.base() < rhs.base());
-	}
-	template<class Iterator1, class Iterator2>
-	bool operator<=(const ft::reverse_iterator<Iterator1>& lhs, const ft::reverse_iterator<Iterator2>& rhs){
-		return (lhs.base() <= rhs.base());
-	}
-	template<class Iterator1, class Iterator2>
-	bool operator> (const ft::reverse_iterator<Iterator1>& lhs, const ft::reverse_iterator<Iterator2>& rhs){
 		return (lhs.base() > rhs.base());
 	}
 	template<class Iterator1, class Iterator2>
-	bool operator>=(const ft::reverse_iterator<Iterator1>& lhs, const ft::reverse_iterator<Iterator2>& rhs){
+	bool operator<=(const ft::reverse_iterator<Iterator1>& lhs, const ft::reverse_iterator<Iterator2>& rhs){
 		return (lhs.base() >= rhs.base());
+	}
+	template<class Iterator1, class Iterator2>
+	bool operator> (const ft::reverse_iterator<Iterator1>& lhs, const ft::reverse_iterator<Iterator2>& rhs){
+		return (lhs.base() < rhs.base());
+	}
+	template<class Iterator1, class Iterator2>
+	bool operator>=(const ft::reverse_iterator<Iterator1>& lhs, const ft::reverse_iterator<Iterator2>& rhs){
+		return (lhs.base() <= rhs.base());
 	}
 	template<class Iter>
 	reverse_iterator<Iter> operator+(typename reverse_iterator<Iter>::difference_type n, const reverse_iterator<Iter>& it){
-		return (it.base() - n);
+		return (reverse_iterator<Iter>(it.base() - n));
 	}
-	template<class Iter>
-	typename reverse_iterator<Iter>::difference_type operator-(const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs){
+	// template<class Iter>
+	// typename reverse_iterator<Iter>::difference_type operator-(const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs){
+	// 	return (rhs.base() - lhs.base());
+	// }
+	template< class Iterator1, class Iterator2 >
+	typename reverse_iterator<Iterator1>::difference_type operator-( const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs ){
 		return (rhs.base() - lhs.base());
 	}
 
@@ -175,8 +179,10 @@ namespace ft
 		// 		Constructors
 		normal_iterator() : current(Iter()){}
 		normal_iterator(const Iter& i) : current(i){}
-		template<typename U>
-		normal_iterator(const typename ft::enable_if< ft::is_same<U, Iter>::value, normal_iterator<U> >::type & i) : current(i.base()){}
+		// template<typename U>
+		// normal_iterator(const typename ft::enable_if< ft::is_same<U, Iter>::value, normal_iterator<U> >::type & i) : current(i.base()){}
+		template <class U>
+		normal_iterator(const normal_iterator<U>& other) : current(other.base()){}
 
 		//		Assignement Operator Overload
 		template<class U>

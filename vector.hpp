@@ -133,10 +133,10 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 		const_iterator begin() const {return const_iterator(_start);}
 		iterator end() {return iterator(_finish);}
 		const_iterator end() const {return const_iterator(_finish);}
-		reverse_iterator rbegin() {return reverse_iterator(begin());}
-		const_reverse_iterator rbegin() const {return const_reverse_iterator(begin());}
-		reverse_iterator rend() {return reverse_iterator(end());}
-		const_reverse_iterator rend() const {return const_reverse_iterator(end());}
+		reverse_iterator rbegin() {return reverse_iterator(end());}
+		const_reverse_iterator rbegin() const {return const_reverse_iterator(end());}
+		reverse_iterator rend() {return reverse_iterator(begin());}
+		const_reverse_iterator rend() const {return const_reverse_iterator(begin());}
 
 	//		CAPACITY
 		bool empty() const {return (_start == _finish);}
@@ -164,7 +164,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 		iterator insert( iterator pos, const T& value ){
 			const size_type pos_index = pos - begin();
 			if (_finish != _end_of_storage)
-				_insert(pos.base(), value);
+				_insert(pos, value);
 			else
 				_realloc_and_insert_n(pos, 1, value);
 			return (begin() + pos_index);
@@ -208,7 +208,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			if (this == &other)
 				return;
 			std::swap(_start, other._start);
-			std::swap(_finish, other.finish);
+			std::swap(_finish, other._finish);
 			std::swap(_end_of_storage, other._end_of_storage);
 		}
 
@@ -269,7 +269,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			{
 				_construct(_finish, *(_finish - 1));
 				++_finish;
-				std::copy_backward(pos, iterator(_finish - 2), iterator(_finish));
+				std::copy_backward(pos, end() - 1, end());
 				*pos = value;
 			}
 		}
@@ -372,7 +372,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 		void	_range_erase(iterator first, iterator last)
 		{
 			size_type count = last - first;
-			std::copy(last, _finish, first);
+			std::copy(last, end(), first);
 			_range_destroy(_finish - count, _finish);
 			_finish -= count;
 		}

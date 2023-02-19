@@ -13,15 +13,10 @@
 
 int main()
 {
-	ft::vector<int> v(3, 24);
-	ft::vector<int> v2(v);
-	// std::cout << *v.begin() << std::endl;
-	// std::cout << *(v.begin() + 1) << std::endl;
-	// std::cout << *(v.begin() + 2) << std::endl;
-	std::cout << "size = " << v2.size() << std::endl;
-	// std::vector<int> v;
-	// v.push_back(22);
-	// bool b = v.begin() == v.end();
-	// std::cout << b << std::endl;
+	ft::vector<int> v(5);
+	ft::vector<int>::reverse_iterator rit(v.rbegin());
+	ft::vector<int>::reverse_iterator rit2(v.rend());
+	for (;rit != rit2; ++rit)
+		std::cout << "non" << std::endl;
 	return (0);
 }
