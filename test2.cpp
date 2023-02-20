@@ -13,9 +13,7 @@
 
 int main()
 {
-	ft::vector<int> v;
-	v.assign(0, 3);
-	// std::cout << *v.begin() << std::endl;
+	ft::vector<int> v(0, 3);
 	std::cout << v.capacity() << std::endl;
 	std::cout << v.size() << std::endl;
 	return (0);

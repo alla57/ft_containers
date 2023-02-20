@@ -248,8 +248,6 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			return (storage_start);
 		}
 		void	_deallocate(pointer start, std::size_t count){
-			if (count == 0)
-				return ;
 			_allocator.deallocate(start, count);
 		}
 		pointer	_allocate_and_initialize(size_type count, const value_type& value){
