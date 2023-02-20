@@ -13,10 +13,10 @@
 
 int main()
 {
-	ft::vector<int> v(5);
-	ft::vector<int>::reverse_iterator rit(v.rbegin());
-	ft::vector<int>::reverse_iterator rit2(v.rend());
-	for (;rit != rit2; ++rit)
-		std::cout << "non" << std::endl;
+	ft::vector<int> v;
+	v.assign(0, 3);
+	// std::cout << *v.begin() << std::endl;
+	std::cout << v.capacity() << std::endl;
+	std::cout << v.size() << std::endl;
 	return (0);
 }
