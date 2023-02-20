@@ -10,11 +10,10 @@
 #include "iterator.hpp"
 #include "utility.hpp"
 #include "vector.hpp"
+#include "stack.hpp"
 
 int main()
 {
-	ft::vector<int> v(0, 3);
-	std::cout << v.capacity() << std::endl;
-	std::cout << v.size() << std::endl;
+	ft::stack<int> st;
 	return (0);
 }
