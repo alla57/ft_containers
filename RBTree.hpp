@@ -1,17 +1,21 @@
 #ifndef RBTREE_HPP
 # define RBTREE_HPP
 
+# include <functional>
+
 # define BLACK 1
 # define RED 0
 
-template<typename Data, typename Key>
+template< typename Data, typename Key, typename Compare = std::less<Key> >
 class RBTree
 {
 public:
 	typedef Data	data_type;
 	typedef Key		key_type;
 
-	RBTree() : Root(){}
+	RBTree() : Root(), Nil(){
+		Nil->color = BLACK;
+	}
 // pour l'instant pas nil. On garde les NULL et si besoin on changera
 	// class Node;
 	class Node
@@ -27,6 +31,8 @@ public:
 		bool		color;
 	};
 	Node*	Root;
+	Node*	Nil;
+
 	Node*	grandParent(Node* z) {return z->parent->parent;}
 	Node*	aunt(Node* z){
 		Node* zGrandParent = z->parent->parent;
@@ -37,9 +43,12 @@ public:
 	void	color_flip(Node* z){
 		Node* zGrandParent = grandParent(z);
 		Node* zAunt = aunt(z);
-		z->parent->color = !z->parent->color;
-		zGrandParent->color = !zGrandParent->color;
-		zAunt->color = !zAunt->color;
+		if (z->parent != NULL)//modify if we put Nil as parent of Root
+			z->parent->color = !z->parent->color;
+		if (zGrandParent != NULL)//modify if we put Nil as parent of Root
+			zGrandParent->color = !zGrandParent->color;
+		if (zAunt != Nil)
+			zAunt->color = !zAunt->color;
 	}
 	void	rotate_left(Node* x){
 		Node* xNewParent = x->right;
@@ -72,10 +81,7 @@ public:
 		x->parent = xNewParent;
 	}
 	void	insert(key_type key, data_type data){
-		Node* z = new Node;
-		z->key = key;
-		z->data = data;
-
+		Node* z = new Node(key, data);
 		Node* y = NULL;
 		Node* x = Root;
 
@@ -87,26 +93,24 @@ public:
 			else
 				x = x->right;
 		}
+		z->parent = y;
+		if (y == NULL)
+			Root = z;
+		else if (z->key < y->key)
+			y->left = z;
+		else
+			y->right = z;
+		if (z->parent == NULL)
+		{
+			z->color = BLACK;
+			return;
+		}
 
-	node->parent = y;
-	if (y == nullptr) {
-		root = node;
-	} else if (node->data < y->data) {
-		y->left = node;
-	} else {
-		y->right = node;
+		if (z->parent->parent == nullptr) {
+			return;
+		}
+		insert_fix(z);
 	}
-
-	if (node->parent == nullptr) {
-		node->color = 0;
-		return;
-	}
-
-	if (node->parent->parent == nullptr) {
-		return;
-	}
-    insert_fix(node);
-  }
 };
 
 #endif

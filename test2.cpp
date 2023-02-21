@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <memory>
 // #include <type_traits>
+#include <map>
 
 #include "type_traits.hpp"
 #include "iterator.hpp"
@@ -15,5 +16,6 @@
 int main()
 {
 	ft::stack<int> st;
+	std::map
 	return (0);
 }
