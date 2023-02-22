@@ -16,6 +16,19 @@
 int main()
 {
 	ft::stack<int> st;
-	std::map
-	return (0);
+	std::map<int, std::string> m;
+	std::map<int, std::string>::iterator it;
+	m.insert(std::pair<int, std::string>(0 ,"aprout"));
+	it = m.begin();
+	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	m.insert(std::pair<int, std::string>(1 ,"btoto"));
+	++it;
+	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	m.insert(std::pair<int, std::string>(2 ,"cyoyo"));
+	++it;
+	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	m.insert(std::pair<int, std::string>(3 ,"dysl"));
+	++it;
+	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	return(0);
 }
