@@ -9,47 +9,52 @@
 
 namespace ft
 {
+	//	RED-BLACK TREE NODE CLASS
+	template <typename Key, typename Data>
+	class RB_Node
+	{
+	public:
+		typedef RB_Node*		node_ptr;
+		typedef Data		data_type;
+		typedef Key			key_type;
+
+		RB_Node() : color(RED), left(NULL), right(NULL), parent(NULL), key(), data(){}
+		RB_Node(key_type& key, data_type& data) : color(RED), left(NULL), right(NULL), parent(NULL), key(key), data(data){}
+		node_ptr	parent;
+		node_ptr	left;
+		node_ptr	right;
+		key_type&	key;
+		data_type&	data;
+		bool		color;
+	};
+
+	//	RED-BLACK TREE CLASS
 	template< typename Data, typename Key, typename Compare = std::less<Key>, typename Allocator = std::allocator<Data> >
 	class RBTree
 	{
 	public:
-		typedef Data		data_type;
-		typedef Key			key_type;
-		typedef Compare		key_compare;
-		typedef Allocator	allocator_type;
+		typedef typename RB_Node::node_ptr	node_ptr;
+		typedef Data						data_type;
+		typedef Key							key_type;
+		typedef Compare						key_compare;
+		typedef Allocator					allocator_type;
 
 		RBTree(const allocator_type& alloc = allocator_type()) : Root(), Nil(){
 			Nil->color = BLACK;
 		}
-	// pour l'instant pas nil. On garde les NULL et si besoin on changera
-		// class Node;
-	private:
-		class Node
-		{
-		public:
-			Node() : color(RED), left(NULL), right(NULL), parent(NULL), key(), data(){}
-			Node(key_type& key, data_type& data) : color(RED), left(NULL), right(NULL), parent(NULL), key(key), data(data){}
-			Node*		parent;
-			Node*		left;
-			Node*		right;
-			key_type	key;
-			data_type	data;
-			bool		color;
-		};
-	public:
-		Node*	Root;
-		Node*	Nil;
+		node_ptr	Root;
+		node_ptr	Nil;
 
-		Node*	grandParent(Node* z) {return z->parent->parent;}
-		Node*	aunt(Node* z){
-			Node* zGrandParent = z->parent->parent;
+		node_ptr	grandParent(node_ptr z) {return z->parent->parent;}
+		node_ptr	aunt(node_ptr z){
+			node_ptr zGrandParent = z->parent->parent;
 			if (zGrandParent->left == z->parent)
 				return z->GrandParent->right;
 			return z->GrandParent->left;
 		}
-		void	color_flip(Node* z){
-			Node* zGrandParent = grandParent(z);
-			Node* zAunt = aunt(z);
+		void	color_flip(node_ptr z){
+			node_ptr zGrandParent = grandParent(z);
+			node_ptr zAunt = aunt(z);
 			if (z->parent != NULL)//modify if we put Nil as parent of Root
 				z->parent->color = !z->parent->color;
 			if (zGrandParent != NULL)//modify if we put Nil as parent of Root
@@ -57,8 +62,8 @@ namespace ft
 			if (zAunt != Nil)
 				zAunt->color = !zAunt->color;
 		}
-		void	rotate_left(Node* x){
-			Node* xNewParent = x->right;
+		void	rotate_left(node_ptr x){
+			node_ptr xNewParent = x->right;
 			x->right = xNewParent->left;
 			if (xNewParent->left != NULL)
 				xNewParent->left->parent = x;
@@ -72,8 +77,8 @@ namespace ft
 			xNewParent->left = x;
 			x->parent = xNewParent;
 		}
-		void	rotate_right(Node* x){
-			Node* xNewParent = x->left;
+		void	rotate_right(node_ptr x){
+			node_ptr xNewParent = x->left;
 			x->left = xNewParent->right;
 			if (xNewParent->right != NULL)
 				xNewParent->right->parent = x;
@@ -88,9 +93,9 @@ namespace ft
 			x->parent = xNewParent;
 		}
 		void	insert(key_type key, data_type data){
-			Node* z = new Node(key, data);
-			Node* y = NULL;
-			Node* x = Root;
+			node_ptr z = new Node(key, data);
+			node_ptr y = NULL;
+			node_ptr x = Root;
 
 			while (x != NULL)
 			{

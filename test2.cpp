@@ -30,5 +30,6 @@ int main()
 	m.insert(std::pair<int, std::string>(3 ,"dysl"));
 	++it;
 	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	std::cout << "address total = " << sizeof(m) << std::endl;
 	return(0);
 }
