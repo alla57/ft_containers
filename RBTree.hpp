@@ -24,26 +24,28 @@ namespace ft
 		node_ptr	left;
 		node_ptr	right;
 		key_type&	key;
-		data_type&	data;
+		data_type	data;
 		bool		color;
 	};
 
 	//	RED-BLACK TREE CLASS
-	template< typename Data, typename Key, typename Compare = std::less<Key>, typename Allocator = std::allocator<Data> >
+	template< typename Data, typename Key, typename Node = RB_Node, typename Compare = std::less<Key>, typename Allocator = std::allocator<Data> >
 	class RBTree
 	{
 	public:
+		typedef RB_Node						node_type;
 		typedef typename RB_Node::node_ptr	node_ptr;
 		typedef Data						data_type;
 		typedef Key							key_type;
 		typedef Compare						key_compare;
 		typedef Allocator					allocator_type;
+		typedef Allocator::rebind<
 
 		RBTree(const allocator_type& alloc = allocator_type()) : Root(), Nil(){
 			Nil->color = BLACK;
 		}
 		node_ptr	Root;
-		node_ptr	Nil;
+		node_type	Nil;
 
 		node_ptr	grandParent(node_ptr z) {return z->parent->parent;}
 		node_ptr	aunt(node_ptr z){
@@ -93,7 +95,7 @@ namespace ft
 			x->parent = xNewParent;
 		}
 		void	insert(key_type key, data_type data){
-			node_ptr z = new Node(key, data);
+			node_ptr z =  _create_node(key, data);
 			node_ptr y = NULL;
 			node_ptr x = Root;
 
@@ -122,6 +124,12 @@ namespace ft
 				return;
 			}
 			insert_fix(z);
+		}
+	private:
+		allocator_type _allocator;
+
+		node_ptr	_create_node(const allocator_type& alloc = allocator_type()){
+			node_ptr node = alloc.allocate(1);
 		}
 	};
 }
