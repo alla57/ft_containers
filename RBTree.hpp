@@ -22,6 +22,17 @@ namespace ft
 
 		RB_Node() : color(RED), left(NULL), right(NULL), parent(NULL), key(){}
 		RB_Node(key_type& key, data_type& data) : color(RED), left(NULL), right(NULL), parent(NULL), key(key), data(data){}
+
+		const RB_Node& operator=(const RB_Node& other) {
+			if (this == &other)
+				return (*this);
+			color = other.color;
+			left = other.left;
+			right = other.right;
+			parent = other.parent;
+			key = other.key;
+			data = other.data;
+		}
 		node_ptr	parent;
 		node_ptr	left;
 		node_ptr	right;
