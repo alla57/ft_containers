@@ -29,17 +29,17 @@ namespace ft
 	};
 
 	//	RED-BLACK TREE CLASS
-	template< typename Data, typename Key, typename Node = RB_Node, typename Compare = std::less<Key>, typename Allocator = std::allocator<Data> >
+	template< typename Key, typename Data, typename Node = RB_Node<Key, Data>, typename Compare = std::less<Key>, typename Allocator = std::allocator<Data> >
 	class RBTree
 	{
 	public:
-		typedef RB_Node						node_type;
-		typedef typename RB_Node::node_ptr	node_ptr;
+		typedef Node						node_type;
+		typedef typename Node::node_ptr		node_ptr;
 		typedef Data						data_type;
 		typedef Key							key_type;
 		typedef Compare						key_compare;
 		typedef Allocator					allocator_type;
-		typedef Allocator::rebind<
+		typedef typename Allocator::rebind<>
 
 		RBTree(const allocator_type& alloc = allocator_type()) : Root(), Nil(){
 			Nil->color = BLACK;
