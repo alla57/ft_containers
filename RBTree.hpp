@@ -4,6 +4,8 @@
 # include <functional>
 # include <memory>
 
+# include "utility.hpp"
+
 # define BLACK 1
 # define RED 0
 
@@ -14,11 +16,11 @@ namespace ft
 	class RB_Node
 	{
 	public:
-		typedef RB_Node*		node_ptr;
+		typedef RB_Node*	node_ptr;
 		typedef Data		data_type;
 		typedef Key			key_type;
 
-		RB_Node() : color(RED), left(NULL), right(NULL), parent(NULL), key(), data(){}
+		RB_Node() : color(RED), left(NULL), right(NULL), parent(NULL), key(){}
 		RB_Node(key_type& key, data_type& data) : color(RED), left(NULL), right(NULL), parent(NULL), key(key), data(data){}
 		node_ptr	parent;
 		node_ptr	left;
@@ -29,17 +31,17 @@ namespace ft
 	};
 
 	//	RED-BLACK TREE CLASS
-	template< typename Key, typename Data, typename Node = RB_Node<Key, Data>, typename Compare = std::less<Key>, typename Allocator = std::allocator<Data> >
+	template< typename Key, typename Data, typename Node = RB_Node<Key, Data>, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, Data> > >
 	class RBTree
 	{
 	public:
-		typedef Node						node_type;
-		typedef typename Node::node_ptr		node_ptr;
-		typedef Data						data_type;
-		typedef Key							key_type;
-		typedef Compare						key_compare;
-		typedef Allocator					allocator_type;
-		typedef typename Allocator::rebind<>
+		typedef Node													node_type;
+		typedef typename Node::node_ptr									node_ptr;
+		typedef Data													data_type;
+		typedef Key														key_type;
+		typedef Compare													key_compare;
+		typedef Allocator												allocator_type;
+		typedef typename Allocator::template rebind<node_type>::other	node_allocator_type;
 
 		RBTree(const allocator_type& alloc = allocator_type()) : Root(), Nil(){
 			Nil->color = BLACK;
@@ -128,8 +130,9 @@ namespace ft
 	private:
 		allocator_type _allocator;
 
-		node_ptr	_create_node(const allocator_type& alloc = allocator_type()){
+		node_ptr	_create_node(const node_allocator_type& alloc = node_allocator_type()){
 			node_ptr node = alloc.allocate(1);
+			alloc.construct(node, node_type());
 		}
 	};
 }
