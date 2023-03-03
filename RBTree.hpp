@@ -50,11 +50,12 @@ namespace ft
 		typedef typename Node::node_ptr									node_ptr;
 		typedef Data													data_type;
 		typedef Key														key_type;
+		typedef ft::pair<const Key, Data>								value_type;
 		typedef Compare													key_compare;
 		typedef Allocator												allocator_type;
 		typedef typename Allocator::template rebind<node_type>::other	node_allocator_type;
 
-		RBTree(const allocator_type& alloc = allocator_type()) : Root(), Nil(){
+		RBTree(const allocator_type& alloc = allocator_type()) : Root(), Nil(), _node_allocator(alloc){
 			Nil->color = BLACK;
 		}
 		node_ptr	Root;
@@ -139,11 +140,12 @@ namespace ft
 			insert_fix(z);
 		}
 	private:
-		allocator_type _allocator;
+		node_allocator_type	_node_allocator;
 
-		node_ptr	_create_node(const node_allocator_type& alloc = node_allocator_type()){
-			node_ptr node = alloc.allocate(1);
-			alloc.construct(node, node_type());
+		node_ptr	_create_node(const value_type& value = value_type()){
+			node_ptr node = _node_allocator.allocate(1);
+			_node_allocator.construct(node, value);
+			return (node);
 		}
 	};
 }
