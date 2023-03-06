@@ -152,41 +152,47 @@ namespace ft
 					z->parent->parent->color = RED;
 					z = z->parent->parent;
 				}
-				else if (z == z->parent->right)
+				else
 				{
-					z = z->parent;
-					rotate_left(z);
+					if (z == z->parent->right)
+					{
+						z = z->parent;
+						rotate_left(z);
+					}
+					z->parent->color = BLACK;
+					z->parent->parent->color = RED;
+					rotate_right(z->parent->parent);
 				}
-				z->parent->color = BLACK;
-				z->parent->parent->color = RED;
-				rotate_right(z->parent->parent);
 			}
 			else
 			{
-				y = z->parent->parent->right;
-
-				if (y->color == 1) {
-				y->color = 0;
-				z->parent->color = 0;
-				z->parent->parent->color = 1;
-				z = z->parent->parent;
-				} else {
-				if (z == z->parent->right) {
-				z = z->parent;
-				leftRotate(z);
+				y = z->parent->parent->left;
+				if (y->color == RED)
+				{
+					z->parent->color = BLACK;
+					y->color = BLACK;
+					z->parent->parent->color = RED;
+					z = z->parent->parent;
 				}
-				z->parent->color = 0;
-				z->parent->parent->color = 1;
-				rightRotate(z->parent->parent);
+				else
+				{
+					if (z == z->parent->left)
+					{
+						z = z->parent;
+						rotate_right(z);
+					}
+					z->parent->color = BLACK;
+					z->parent->parent->color = RED;
+					rotate_left(z->parent->parent);
 				}
 			}
-			if (z == root)
-			{
-				break;
-			}
+			// if (z == root)
+			// {
+			// 	break;
+			// }
 		}
-		root->color = 0;
-  }
+		Root->color = BLACK;
+		}
 	private:
 		node_allocator_type	_node_allocator;
 
