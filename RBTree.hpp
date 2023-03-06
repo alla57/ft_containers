@@ -16,12 +16,13 @@ namespace ft
 	class RB_Node
 	{
 	public:
-		typedef RB_Node*	node_ptr;
-		typedef Data		data_type;
-		typedef Key			key_type;
+		typedef RB_Node*			node_ptr;
+		typedef Data				data_type;
+		typedef Key					key_type;
+		typedef ft::pair<Key, Data> value_type;
 
-		RB_Node() : color(RED), left(NULL), right(NULL), parent(NULL), key(){}
-		RB_Node(key_type& key, data_type& data) : color(RED), left(NULL), right(NULL), parent(NULL), key(key), data(data){}
+		// RB_Node() : color(BLACK), left(NULL), right(NULL), parent(NULL), key(){}
+		RB_Node(const value_type& value) : color(RED), left(NULL), right(NULL), parent(NULL), key(value.first), data(value.second){}
 
 		const RB_Node& operator=(const RB_Node& other) {
 			if (this == &other)
@@ -36,7 +37,7 @@ namespace ft
 		node_ptr	parent;
 		node_ptr	left;
 		node_ptr	right;
-		key_type&	key;
+		const key_type	key;
 		data_type	data;
 		bool		color;
 	};
@@ -55,11 +56,12 @@ namespace ft
 		typedef Allocator												allocator_type;
 		typedef typename Allocator::template rebind<node_type>::other	node_allocator_type;
 
-		RBTree(const allocator_type& alloc = allocator_type()) : Root(), Nil(), _node_allocator(alloc){
-			Nil->color = BLACK;
+		RBTree(const allocator_type& alloc = allocator_type()) : Root(), _node_allocator(alloc){
+			_initialize_nil();
+			Root = Nil;
 		}
 		node_ptr	Root;
-		node_type	Nil;
+		node_ptr	Nil;
 
 		node_ptr	grandParent(node_ptr z) {return z->parent->parent;}
 		node_ptr	aunt(node_ptr z){
@@ -108,12 +110,12 @@ namespace ft
 			xNewParent->right = x;
 			x->parent = xNewParent;
 		}
-		void	insert(key_type key, data_type data){
-			node_ptr z =  _create_node(key, data);
-			node_ptr y = NULL;
+		void	insert(const value_type& value){
+			node_ptr z =  _create_node(value);
+			node_ptr y = Nil;
 			node_ptr x = Root;
 
-			while (x != NULL)
+			while (x != Nil)
 			{
 				y = x;
 				if (z->key < x->key)
@@ -122,29 +124,81 @@ namespace ft
 					x = x->right;
 			}
 			z->parent = y;
-			if (y == NULL)
+			if (y == Nil)
 				Root = z;
 			else if (z->key < y->key)
 				y->left = z;
 			else
 				y->right = z;
-			if (z->parent == NULL)
-			{
-				z->color = BLACK;
-				return;
-			}
-
-			if (z->parent->parent == nullptr) {
-				return;
-			}
+			z->left = Nil;
+			z->right = Nil;
+			// if (z->parent->parent == nullptr) {
+			// 	return;
+			// }
 			insert_fix(z);
 		}
+
+		void insertFix(node_ptr z) {
+		node_ptr y;
+		while (z->parent->color == RED)
+		{
+			if (z->parent == z->parent->parent->left)
+			{
+				y = z->parent->parent->right;
+				if (y->color == RED)
+				{
+					z->parent->color = BLACK;
+					y->color = BLACK;
+					z->parent->parent->color = RED;
+					z = z->parent->parent;
+				}
+				else if (z == z->parent->right)
+				{
+					z = z->parent;
+					rotate_left(z);
+				}
+				z->parent->color = BLACK;
+				z->parent->parent->color = RED;
+				rotate_right(z->parent->parent);
+			}
+			else
+			{
+				y = z->parent->parent->right;
+
+				if (y->color == 1) {
+				y->color = 0;
+				z->parent->color = 0;
+				z->parent->parent->color = 1;
+				z = z->parent->parent;
+				} else {
+				if (z == z->parent->right) {
+				z = z->parent;
+				leftRotate(z);
+				}
+				z->parent->color = 0;
+				z->parent->parent->color = 1;
+				rightRotate(z->parent->parent);
+				}
+			}
+			if (z == root)
+			{
+				break;
+			}
+		}
+		root->color = 0;
+  }
 	private:
 		node_allocator_type	_node_allocator;
 
+		void	_initialize_nil(){
+			Nil = _create_node();
+			Nil->color = BLACK;
+			Nil->parent = Nil;
+		}
+
 		node_ptr	_create_node(const value_type& value = value_type()){
 			node_ptr node = _node_allocator.allocate(1);
-			_node_allocator.construct(node, value);
+			_node_allocator.construct(node, value);// if doesnt compile node_type(value)
 			return (node);
 		}
 	};
