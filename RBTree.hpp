@@ -132,66 +132,58 @@ namespace ft
 				y->right = z;
 			z->left = Nil;
 			z->right = Nil;
-			// if (z->parent->parent == nullptr) {
-			// 	return;
-			// }
 			insert_fix(z);
 		}
-
 		void insertFix(node_ptr z) {
-		node_ptr y;
-		while (z->parent->color == RED)
-		{
-			if (z->parent == z->parent->parent->left)
+			node_ptr y;
+			while (z->parent->color == RED)
 			{
-				y = z->parent->parent->right;
-				if (y->color == RED)
+				if (z->parent == z->parent->parent->left)
 				{
-					z->parent->color = BLACK;
-					y->color = BLACK;
-					z->parent->parent->color = RED;
-					z = z->parent->parent;
+					y = z->parent->parent->right;
+					if (y->color == RED)
+					{
+						z->parent->color = BLACK;
+						y->color = BLACK;
+						z->parent->parent->color = RED;
+						z = z->parent->parent;
+					}
+					else
+					{
+						if (z == z->parent->right)
+						{
+							z = z->parent;
+							rotate_left(z);
+						}
+						z->parent->color = BLACK;
+						z->parent->parent->color = RED;
+						rotate_right(z->parent->parent);
+					}
 				}
 				else
 				{
-					if (z == z->parent->right)
+					y = z->parent->parent->left;
+					if (y->color == RED)
 					{
-						z = z->parent;
-						rotate_left(z);
+						z->parent->color = BLACK;
+						y->color = BLACK;
+						z->parent->parent->color = RED;
+						z = z->parent->parent;
 					}
-					z->parent->color = BLACK;
-					z->parent->parent->color = RED;
-					rotate_right(z->parent->parent);
+					else
+					{
+						if (z == z->parent->left)
+						{
+							z = z->parent;
+							rotate_right(z);
+						}
+						z->parent->color = BLACK;
+						z->parent->parent->color = RED;
+						rotate_left(z->parent->parent);
+					}
 				}
 			}
-			else
-			{
-				y = z->parent->parent->left;
-				if (y->color == RED)
-				{
-					z->parent->color = BLACK;
-					y->color = BLACK;
-					z->parent->parent->color = RED;
-					z = z->parent->parent;
-				}
-				else
-				{
-					if (z == z->parent->left)
-					{
-						z = z->parent;
-						rotate_right(z);
-					}
-					z->parent->color = BLACK;
-					z->parent->parent->color = RED;
-					rotate_left(z->parent->parent);
-				}
-			}
-			// if (z == root)
-			// {
-			// 	break;
-			// }
-		}
-		Root->color = BLACK;
+			Root->color = BLACK;
 		}
 	private:
 		node_allocator_type	_node_allocator;
