@@ -19,17 +19,23 @@ int main()
 	std::map<int, std::string> m;
 	std::map<int, std::string>::iterator it;
 	m.insert(std::pair<int, std::string>(0 ,"aprout"));
+	m.insert(std::pair<int, std::string>(1 ,"one"));
+	m.insert(std::pair<int, std::string>(2 ,"two"));
 	it = m.begin();
-	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
-	m.insert(std::pair<int, std::string>(1 ,"btoto"));
-	++it;
-	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
-	m.insert(std::pair<int, std::string>(2 ,"cyoyo"));
-	++it;
-	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
-	m.insert(std::pair<int, std::string>(3 ,"dysl"));
-	++it;
-	std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
-	std::cout << "address total = " << sizeof(m) << std::endl;
+	--it;
+	--it;
+	std::cout << it->second << std::endl;
+
+	// std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	// m.insert(std::pair<int, std::string>(1 ,"btoto"));
+	// ++it;
+	// std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	// m.insert(std::pair<int, std::string>(2 ,"cyoyo"));
+	// ++it;
+	// std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	// m.insert(std::pair<int, std::string>(3 ,"dysl"));
+	// ++it;
+	// std::cout << "address = " << std::addressof(*it) << " - value = " << sizeof(*it) << std::endl;
+	// std::cout << "address total = " << sizeof(m) << std::endl;
 	return(0);
 }

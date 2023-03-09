@@ -43,6 +43,15 @@ namespace ft
 		data_type	data;
 		bool		color;
 	};
+	//	INCREMENT AND DECREMENT NODE
+	// template<typename Key, typename Data>
+	RB_Node*	rb_tree_increment(RB_Node* x){
+		RB_Node* y = x->right;
+		if (y == NULL)
+			return x;
+		while (y->right != NULL)
+		if (x == y->parent)
+	}
 
 	//	RED-BLACK TREE ITERATOR
 	template<typename T>

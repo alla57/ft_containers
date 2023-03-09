@@ -75,6 +75,7 @@
 		"get_next_line.h": "c",
 		"string.h": "c",
 		"types.h": "c",
-		"stack": "cpp"
+		"stack": "cpp",
+		"cassert": "cpp"
 	}
 }
