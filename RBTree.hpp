@@ -46,11 +46,35 @@ namespace ft
 	//	INCREMENT AND DECREMENT NODE
 	// template<typename Key, typename Data>
 	RB_Node*	rb_tree_increment(RB_Node* x){
-		RB_Node* y = x->right;
+		if (x->right == NULL)
+			return x;
+		if (x->right->right != NULL)
+			return minimum(x->right);
+		RB_Node* y = x->parent;
 		if (y == NULL)
 			return x;
-		while (y->right != NULL)
-		if (x == y->parent)
+		while (y->right != NULL && x == y->right)
+		{
+			x = y;
+			y = y->parent;
+		}
+		return y;
+	}
+
+	RB_Node* rb_tree_decrement(RB_Node* x){
+		if (x->right == NULL)
+			return x;
+		if (x->left->left != NULL)
+			return maximum(x->left);
+		RB_Node* y = x->parent;
+		if (y == NULL)
+			return x;
+		while (y != TNULL && x == y->left)
+		{
+			x = y;
+			y = y->parent;
+		}
+		return y;
 	}
 
 	//	RED-BLACK TREE ITERATOR
