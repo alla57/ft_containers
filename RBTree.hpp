@@ -229,8 +229,9 @@ namespace ft
 				u->parent->left = v;
 			else
 				u->parent->right = v;
-			v->parent = u->parent;
-		}
+			if (v != Nil)
+				v->parent = u->parent;
+		}// KO because we send x to delete_fix and x is nil so it segfault
 		void	_delete_node(const key_type& key){
 			node_ptr z = search(key);
 			if (z == Nil)
@@ -271,6 +272,8 @@ namespace ft
 		}
 		void	_deleteFix(node_ptr x){
 			node_ptr w;
+			if (x->key == 73)
+				std::cout << "prout" << std::endl;
 			while (x != Root && x->color == BLACK)
 			{
 				if (x == x->parent->left)
