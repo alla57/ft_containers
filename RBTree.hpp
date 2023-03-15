@@ -13,17 +13,17 @@
 namespace ft
 {
 	//	RED-BLACK TREE NODE CLASS
-	template <typename Key, typename Data>
+	template <typename Val>
 	class RB_Node
 	{
 	public:
 		typedef RB_Node*			node_ptr;
-		typedef Data				data_type;
-		typedef Key					key_type;
-		typedef ft::pair<Key, Data> value_type;
+		typedef typename Val::second_type				data_type;
+		typedef typename Val::first_type					key_type;
+		typedef Val							value_type;
 
 		// RB_Node() : color(BLACK), left(NULL), right(NULL), parent(NULL), key(){}
-		RB_Node(const value_type& value = value_type()) : value(value), color(RED), left(NULL), right(NULL), parent(NULL), key(value.first){}
+		RB_Node(const value_type& value = value_type()) : value(value), color(RED), left(NULL), right(NULL), parent(NULL), key(value.first), is_nil(false){}
 
 		const RB_Node& operator=(const RB_Node& other) {
 			if (this == &other)
@@ -42,28 +42,46 @@ namespace ft
 		key_type	key;
 		value_type	value;
 		bool		color;
+		bool		is_nil;
+		node_ptr	minimum(){
+			node_ptr x = this;
+			while (!(x->left->is_nil))
+				x = x->left;
+			return (x);
+		}
+		node_ptr	maximum(){
+			node_ptr x = this;
+			while (!(x->right->is_nil))
+				x = x->right;
+			return x;
+		}
 	};
 	//	INCREMENT AND DECREMENT NODE
-	template<typename Key, typename Data>
-	RB_Node<Key, Data>*	rb_tree_increment(RB_Node<Key, Data>* x){
-		// if (x->right == NULL)
-		// 	return x;
-		if (x->right->right != NULL)
-			return minimum(x->right);
-		RB_Node<Key, Data>* y = x->parent;
+	template<typename Val>
+	RB_Node<Val>*	rb_tree_increment(RB_Node<Val>* x){
+		if (x->parent == NULL)
+			return (x);
+		if (!(x->right->is_nil))
+			return x->right->minimum();
+		// std::cout << "prout" << std::endl;
+		RB_Node<Val>* y = x->parent;
 		while (x == y->right)
 		{
 			x = y;
 			y = y->parent;
 		}
-		return y;
+		if (x->right != y)
+			x = y;
+		return x;
 	}
 
-	template<typename Key, typename Data>
-	RB_Node<Key, Data>* rb_tree_decrement(RB_Node<Key, Data>* x){
-		if (x->left->left != NULL)
-			return maximum(x->left);
-		RB_Node<Key, Data>* y = x->parent;
+	template<typename Val>
+	RB_Node<Val>* rb_tree_decrement(RB_Node<Val>* x){
+		if (x->parent == NULL || (x->parent->parent == x && x->color == RED))
+			return (x->right);
+		if (!(x->left->is_nil))
+			return x->left->maximum();
+		RB_Node<Val>* y = x->parent;
 		while (x == y->left)
 		{
 			x = y;
@@ -82,7 +100,7 @@ namespace ft
 		typedef T*											pointer;
 		typedef std::bidirectional_iterator_tag				iterator_category;
 		typedef std::ptrdiff_t								difference_type;
-		typedef RB_Node<typename T::T1, typename T::T2>		node_type;
+		typedef RB_Node<value_type>		node_type;
 		typedef node_type*									node_ptr;
 
 		node_ptr	node;
@@ -101,19 +119,20 @@ namespace ft
 	};
 
 	//	RED-BLACK TREE CLASS
-	template< typename Key, typename Data, typename Node = RB_Node<Key, Data>, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, Data> > >
+	template< typename Key, typename Val, typename Node = RB_Node<Val>, typename Compare = std::less<Key>, typename Allocator = std::allocator<Val> >
 	class RBTree
 	{
 	public:
 		typedef Node													node_type;
 		typedef typename Node::node_ptr									node_ptr;
-		typedef Data													data_type;
+		// typedef Data													data_type;
 		typedef Key														key_type;
-		typedef ft::pair<const Key, Data>								value_type;
+		// typedef ft::pair<const Key, Data>								value_type;
+		typedef Val								value_type;
 		typedef Compare													key_compare;
 		typedef Allocator												allocator_type;
 		typedef typename Allocator::template rebind<node_type>::other	node_allocator_type;
-		typedef RB_Iterator												iterator;
+		typedef RB_Iterator<value_type>									iterator;
 
 		RBTree(const allocator_type& alloc = allocator_type()) : _node_allocator(alloc){
 			_initialize_nil();
@@ -174,24 +193,36 @@ namespace ft
 			node_ptr x = Root;
 			while (x != Nil && x->key != key)
 			{
-				if (key < x->key)
+				if (Compare()(key, x->key))
 					x = x->left;
 				else
 					x = x->right;
 			}
 			return (x);
 		}
-		node_ptr	minimum(node_ptr x){
-			while (x->left != Nil)
-				x = x->left;
-			return (x);
+		void erase(iterator& pos){
+			_delete_node(pos.node->key);
+			_update_header();
+			_update_root_parent();
 		}
-		node_ptr	maximum(node_ptr x){
-			while (x->right != Nil)
-				x = x->right;
-			return x;
+	private:
+		node_allocator_type	_node_allocator;
+
+		void	_initialize_nil(){
+			Nil = _create_node();
+			Nil->color = BLACK;
+			Nil->parent = NULL;
+			Nil->is_nil = true;
 		}
-		void	transplant(node_ptr u, node_ptr v){
+
+		void	_initialize_header(){
+			Header = _create_node();
+			Header->color = RED;
+			Header->right = Header;
+			Header->left = Header;
+			Header->parent = NULL;
+		}
+		void	_transplant(node_ptr u, node_ptr v){
 			if (u->parent == NULL)
 				Root = v;
 			else if (u == u->parent->left)
@@ -200,7 +231,7 @@ namespace ft
 				u->parent->right = v;
 			v->parent = u->parent;
 		}
-		void	delete_node(key_type& key){
+		void	_delete_node(const key_type& key){
 			node_ptr z = search(key);
 			if (z == Nil)
 				return ;
@@ -210,35 +241,35 @@ namespace ft
 			if (z->left == Nil)
 			{
 				x = z->right;
-				transplant(z, z->right);
+				_transplant(z, z->right);
 			}
 			else if (z->right == Nil)
 			{
 				x = z->left;
-				transplant(z, z->left);
+				_transplant(z, z->left);
 			}
 			else
 			{
-				y = minimum(z->right);
+				y = z->right->minimum();
 				y_origine_color = y->color;
 				x = y->right;
 				if (y->parent == z)
 					x->parent = y;
 				else
 				{
-					transplant(y, y->right);
+					_transplant(y, y->right);
 					y->right = z->right;
 					y->right->parent = y;
 				}
-				transplant(z, y);
+				_transplant(z, y);
 				y->left = z->left;
 				y->left->parent = y;
 				y->color = z->color;
 			}
 			if (y_origine_color == BLACK)
-				deleteFix(x);
+				_deleteFix(x);
 		}
-		void	deleteFix(node_ptr x){
+		void	_deleteFix(node_ptr x){
 			node_ptr w;
 			while (x != Root && x->color == BLACK)
 			{
@@ -307,22 +338,6 @@ namespace ft
 			}
 			x->color = BLACK;
 		}
-	private:
-		node_allocator_type	_node_allocator;
-
-		void	_initialize_nil(){
-			Nil = _create_node();
-			Nil->color = BLACK;
-			Nil->parent = NULL;
-		}
-
-		void	_initialize_header(){
-			Header = _create_node();
-			Header->color = BLACK;
-			Header->right = Header;
-			Header->left = Header;
-			Header->parent = NULL;
-		}
 
 		node_ptr	_create_node(const value_type& value = value_type()){
 			node_ptr node = _node_allocator.allocate(1);
@@ -340,7 +355,7 @@ namespace ft
 			while (x != Nil)
 			{
 				y = x;
-				if (z->key < x->key)
+				if (Compare()(z->key, x->key))
 					x = x->left;
 				else
 					x = x->right;
@@ -348,16 +363,15 @@ namespace ft
 			z->parent = y;
 			if (y == NULL)
 				Root = z;
-			else if (z->key < y->key)
+			else if (Compare()(z->key, y->key))
 				y->left = z;
 			else
 				y->right = z;
-			insert_fix(z);
+			_insert_fix(z);
 		}
 		void _insert_fix(node_ptr z) {
 			node_ptr y;
-			// if segfault its because when z is root (at first insert) z->parent->color should segfault
-			while (z->parent->color == RED)
+			while (z->parent != NULL && z->parent->color == RED)
 			{
 				if (z->parent == z->parent->parent->left)
 				{
@@ -411,8 +425,8 @@ namespace ft
 
 		void	_update_header(){
 			Header->parent = Root;
-			Header->left = minimum(Root);
-			Header->right = maximum(Root);
+			Header->left = Root->minimum();
+			Header->right = Root->maximum();
 		}
 
 		void	_update_root_parent(){
