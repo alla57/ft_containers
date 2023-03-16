@@ -82,9 +82,14 @@ namespace ft
 		size_type	max_size() const {return tree.max_size();}
 		//		MODIFIERS
 		void						clear(){tree.range_erase(begin(), end());}
-		ft::pair<iterator, bool>	insert(const value_type& value){
-			if (insert())
-		}
+		ft::pair<iterator, bool>	insert(const value_type& value){return tree.insert(value);}
+		iterator					insert(iterator pos, const value_type& value){(void)pos; return insert(value).first;}
+		template<class InputIt>
+		void						insert(InputIt first, InputIt last){return tree.insert(first, last);}
+		iterator					erase(iterator pos){iterator res(pos);++res;tree.erase(pos); return res;}
+		iterator					erase(iterator first, iterator last){return tree.range_erase(first, last);}
+		size_type					erase(const Key& key){return tree.erase(key);}
+		void swap( map& other );
 
 	private:
 		rb_tree_type tree;

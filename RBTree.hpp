@@ -206,19 +206,28 @@ namespace ft
 		const_iterator			end(){return const_iterator(Header);}
 
 		//		MODIFIERS
-		bool insert(const value_type& value){
-			if (search(value.first) != Nil)
-				return false;
-			_insert(value);
-			_update_header();
-			_update_root_parent();
-			++count;
-			return true;
+		ft::pair<iterator, bool> insert(const value_type& value){
+			bool not_found = search(value.first) == Nil;
+			if (not_found)
+			{
+				_insert(value);
+				_update_header();
+				_update_root_parent();
+				++count;
+			}
+			return ft::pair<iterator, bool>(iterator(search(value.first)), not_found);
 		}
 		template<typename InputIt>
 		void range_insert(InputIt first, InputIt last){
 			for (;first != last; ++first)
 				insert(iterator(*first));
+		}
+		size_type	erase(const key_type& key){
+			iterator pos(search(key));
+			if (pos.node == Nil)
+				return 0;
+			erase(pos);			
+			return 1;
 		}
 		void erase(iterator& pos){
 			_delete_node(pos.node->key);
