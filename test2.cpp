@@ -62,7 +62,7 @@ int main()
 	std::cout << std::endl;
 	for (it = tree.begin(); it != tree.end(); ++it)
 	{
-		if (it->first == 73)
+		if (it->first == 24)
 			{std::cout << "prout main" << std::endl; tree.erase(it);}
 	}
 	it = tree.begin();
