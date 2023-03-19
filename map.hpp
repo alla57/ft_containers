@@ -89,10 +89,17 @@ namespace ft
 		iterator					erase(iterator pos){iterator res(pos);++res;tree.erase(pos); return res;}
 		iterator					erase(iterator first, iterator last){return tree.range_erase(first, last);}
 		size_type					erase(const Key& key){return tree.erase(key);}
-		void swap( map& other );
+		void						swap(map& other){tree.swap(other.tree);}
+		//		LOOKUP
+		size_type					count(const Key& key) const {return tree.search(key) != tree.Nil;}
+		iterator					find(const Key& key){return tree.search_it(key);}
+		const_iterator				find(const Key& key) const {return const_iterator(tree.search_it(key));}
+		ft::pair<iterator,iterator>	equal_range(const Key& key);
 
 	private:
 		rb_tree_type tree;
 	};
+	template< class Key, class T, class Compare, class Alloc >
+	void swap( ft::map<Key, T, Compare, Alloc>& lhs, ft::map<Key, T, Compare, Alloc>& rhs ){lhs.swap(rhs);}
 }
 #endif

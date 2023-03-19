@@ -4,6 +4,7 @@
 # include <functional>
 # include <memory>
 # include <exception>
+# include <algorithm>
 
 # include "utility.hpp"
 # include "iterator.hpp"
@@ -241,6 +242,18 @@ namespace ft
 			for(; first != last; ++first)
 				erase(first);
 		}
+		void swap(RBTree& other){
+			std::swap(Nil, other.Nil);
+			std::swap(Header, other.Header);
+			std::swap(Header->parent, other.Header->parent);
+			std::swap(Header->left, other.Header->left);
+			std::swap(Header->right, other.Header->right);
+			std::swap(Root, other.Root);
+			std::swap(Root->parent, other.Root->parent);
+			std::swap(count, other.count);
+			std::swap(_node_allocator, other._node_allocator);
+			std::swap(_key_comp, other._key_comp);
+		}
 		//		ELEMENT ACCESS
 		data_type&	at( const key_type& key ) {
 			node_ptr tmp = search(key);
@@ -258,7 +271,7 @@ namespace ft
 		size_type max_size() const {return _node_allocator.max_size;}
 		node_ptr	search(const key_type& key){
 			node_ptr x = Root;
-			while (x != Nil && x->key != key)
+			while (x != Nil && x != Header && _is_different(key, x->key))
 			{
 				if (_key_comp(key, x->key))
 					x = x->left;
@@ -266,6 +279,25 @@ namespace ft
 					x = x->right;
 			}
 			return (x);
+		}
+		iterator	search_it(const key_type& key){
+			node_ptr pos = search(key);
+			if (pos == Nil)
+				return end();
+			return pos;
+		}
+		iterator lower_bound(const key_type& key){
+			node_ptr x = Root;
+			while (x != Nil && x != Header && _key_comp(key, x->key))
+			{
+				if (_key_comp(key, x->key))
+					x = x->left;
+				else
+					x = x->right;
+			}
+			if (x == Nil)
+				return end();
+			return (iterator(x));
 		}
 	private:
 		node_allocator_type	_node_allocator;
@@ -290,6 +322,9 @@ namespace ft
 			Header->right = Header;
 			Header->left = Header;
 			Header->parent = NULL;
+		}
+		bool _is_different(const key_type& lhs,  const key_type& rhs){
+			return _key_comp(lhs, rhs) || _key_comp(rhs, lhs);
 		}
 		void	_rotate_left(node_ptr x){
 			node_ptr y = x->right;
