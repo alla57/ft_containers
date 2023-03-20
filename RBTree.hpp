@@ -288,16 +288,33 @@ namespace ft
 		}
 		iterator lower_bound(const key_type& key){
 			node_ptr x = Root;
-			while (x != Nil && x != Header && _key_comp(key, x->key))
+			node_ptr y = Header;
+			while (x != Nil)
+			{
+				if (_key_comp(x->key, key))
+					x = x->right;
+				else
+				{
+					y = x;
+					x = x->left;
+				}
+			}
+			return iterator(y);
+		}
+		iterator upper_bound(const key_type& key){
+			node_ptr x = Root;
+			node_ptr y = Header;
+			while (x != Nil)
 			{
 				if (_key_comp(key, x->key))
-					x = x->left;
-				else
 					x = x->right;
+				else
+				{
+					y = x;
+					x = x->left;
+				}
 			}
-			if (x == Nil)
-				return end();
-			return (iterator(x));
+			return iterator(y);
 		}
 	private:
 		node_allocator_type	_node_allocator;

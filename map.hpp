@@ -91,10 +91,15 @@ namespace ft
 		size_type					erase(const Key& key){return tree.erase(key);}
 		void						swap(map& other){tree.swap(other.tree);}
 		//		LOOKUP
-		size_type					count(const Key& key) const {return tree.search(key) != tree.Nil;}
-		iterator					find(const Key& key){return tree.search_it(key);}
-		const_iterator				find(const Key& key) const {return const_iterator(tree.search_it(key));}
-		ft::pair<iterator,iterator>	equal_range(const Key& key);
+		size_type									count(const Key& key) const {return tree.search(key) != tree.Nil;}
+		iterator									find(const Key& key){return tree.search_it(key);}
+		const_iterator								find(const Key& key) const {return const_iterator(tree.search_it(key));}
+		iterator									lower_bound(const Key& key){return tree.lower_bound(key);}
+		const_iterator								lower_bound(const Key& key) const {return const_iterator(tree.lower_bound(key));}
+		iterator									upper_bound(const Key& key){return tree.upper_bound(key);}
+		const_iterator								upper_bound(const Key& key) const {return const_iterator(tree.upper_bound(key));}
+		ft::pair<iterator, iterator>				equal_range(const Key& key){return ft::make_pair<iterator, iterator>(lower_bound(key), upper_bound(key));}
+		ft::pair<const_iterator, const_iterator>	equal_range(const Key& key) const {return ft::make_pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));}
 
 	private:
 		rb_tree_type tree;
