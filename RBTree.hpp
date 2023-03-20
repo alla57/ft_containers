@@ -264,10 +264,10 @@ namespace ft
 		data_type&	operator[]( const key_type& key ) {
 			node_ptr tmp = search(key);
 			if (tmp == Nil)
-				insert(value_type(key, data_type()))
+				insert(value_type(key, data_type()));
 			return tmp->value.second;
 		}
-		node_allocator_type get_allocator() const {return _node_allocator};
+		node_allocator_type get_allocator() const {return _node_allocator;}
 		size_type max_size() const {return _node_allocator.max_size;}
 		node_ptr	search(const key_type& key){
 			node_ptr x = Root;
