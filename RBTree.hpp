@@ -39,12 +39,12 @@ namespace ft
 			value = other.value;
 			return (*this);
 		}
-		node_ptr	parent;
-		node_ptr	left;
-		node_ptr	right;
-		key_type	key;
 		value_type	value;
 		bool		color;
+		node_ptr	left;
+		node_ptr	right;
+		node_ptr	parent;
+		key_type	key;
 		bool		is_nil;
 		node_ptr	minimum(){
 			node_ptr x = this;
@@ -77,9 +77,40 @@ namespace ft
 			x = y;
 		return x;
 	}
+	template<typename Val>
+	const RB_Node<Val>*	rb_tree_increment(const RB_Node<Val>* x){
+		if (x->parent == NULL)
+			return (x);
+		if (!(x->right->is_nil))
+			return x->right->minimum();
+		// std::cout << "prout" << std::endl;
+		RB_Node<Val>* y = x->parent;
+		while (x == y->right)
+		{
+			x = y;
+			y = y->parent;
+		}
+		if (x->right != y)
+			x = y;
+		return x;
+	}
 
 	template<typename Val>
 	RB_Node<Val>* rb_tree_decrement(RB_Node<Val>* x){
+		if (x->parent == NULL || (x->parent->parent == x && x->color == RED))
+			return (x->right);
+		if (!(x->left->is_nil))
+			return x->left->maximum();
+		RB_Node<Val>* y = x->parent;
+		while (x == y->left)
+		{
+			x = y;
+			y = y->parent;
+		}
+		return y;
+	}
+	template<typename Val>
+	const RB_Node<Val>* rb_tree_decrement(const RB_Node<Val>* x){
 		if (x->parent == NULL || (x->parent->parent == x && x->color == RED))
 			return (x->right);
 		if (!(x->left->is_nil))
@@ -202,9 +233,9 @@ namespace ft
 		}
 		//		ITERATORS
 		iterator				begin(){return iterator(Header->left);}
-		const_iterator			begin(){return const_iterator(Header->left);}
+		const_iterator			begin() const {return const_iterator(Header->left);}
 		iterator				end(){return iterator(Header);}
-		const_iterator			end(){return const_iterator(Header);}
+		const_iterator			end() const {return const_iterator(Header);}
 
 		//		MODIFIERS
 		ft::pair<iterator, bool> insert(const value_type& value){
@@ -221,7 +252,7 @@ namespace ft
 		template<typename InputIt>
 		void range_insert(InputIt first, InputIt last){
 			for (;first != last; ++first)
-				insert(iterator(*first));
+				insert(*first);
 		}
 		size_type	erase(const key_type& key){
 			iterator pos(search(key));
@@ -268,7 +299,7 @@ namespace ft
 			return tmp->value.second;
 		}
 		node_allocator_type get_allocator() const {return _node_allocator;}
-		size_type max_size() const {return _node_allocator.max_size;}
+		size_type max_size() const {return _node_allocator.max_size();}
 		node_ptr	search(const key_type& key){
 			node_ptr x = Root;
 			while (x != Nil && x != Header && _is_different(key, x->key))
@@ -301,6 +332,21 @@ namespace ft
 			}
 			return iterator(y);
 		}
+		const_iterator lower_bound(const key_type& key) const {
+			node_ptr x = Root;
+			node_ptr y = Header;
+			while (x != Nil)
+			{
+				if (_key_comp(x->key, key))
+					x = x->right;
+				else
+				{
+					y = x;
+					x = x->left;
+				}
+			}
+			return const_iterator(y);
+		}
 		iterator upper_bound(const key_type& key){
 			node_ptr x = Root;
 			node_ptr y = Header;
@@ -315,6 +361,21 @@ namespace ft
 				}
 			}
 			return iterator(y);
+		}
+		const_iterator upper_bound(const key_type& key) const {
+			node_ptr x = Root;
+			node_ptr y = Header;
+			while (x != Nil)
+			{
+				if (_key_comp(key, x->key))
+					x = x->right;
+				else
+				{
+					y = x;
+					x = x->left;
+				}
+			}
+			return const_iterator(y);
 		}
 	private:
 		node_allocator_type	_node_allocator;

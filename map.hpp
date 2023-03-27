@@ -79,7 +79,7 @@ namespace ft
 		const_reverse_iterator	rend() const {return const_reverse_iterator(begin());}
 		//		CAPACITY
 		bool		empty() const {return begin() == end();}
-		size_type	size() const {return count;}
+		size_type	size() const {return tree.count;}
 		size_type	max_size() const {return tree.max_size();}
 		//		MODIFIERS
 		void						clear(){tree.range_erase(begin(), end());}
@@ -96,9 +96,9 @@ namespace ft
 		iterator									find(const Key& key){return tree.search_it(key);}
 		const_iterator								find(const Key& key) const {return const_iterator(tree.search_it(key));}
 		iterator									lower_bound(const Key& key){return tree.lower_bound(key);}
-		const_iterator								lower_bound(const Key& key) const {return const_iterator(tree.lower_bound(key));}
+		const_iterator								lower_bound(const Key& key) const {return tree.lower_bound(key);}
 		iterator									upper_bound(const Key& key){return tree.upper_bound(key);}
-		const_iterator								upper_bound(const Key& key) const {return const_iterator(tree.upper_bound(key));}
+		const_iterator								upper_bound(const Key& key) const {return tree.upper_bound(key);}
 		ft::pair<iterator, iterator>				equal_range(const Key& key){return ft::make_pair<iterator, iterator>(lower_bound(key), upper_bound(key));}
 		ft::pair<const_iterator, const_iterator>	equal_range(const Key& key) const {return ft::make_pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));}
 		//		OBSERVERS
