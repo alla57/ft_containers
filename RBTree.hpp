@@ -220,16 +220,24 @@ namespace ft
 		RBTree(const RBTree& other) : _node_allocator(other._node_allocator), _key_comp(other._key_comp){
 			if (this == &other)
 				return;
+			_init_tree();
 			*this = other;
 		}
 
 		//		DESTRUCTOR
-		~RBTree() {range_erase(begin(), end());}
+		~RBTree() {
+			range_erase(begin(), end());
+			_delete_header_and_nil();
+		}
 
 		//		ASSIGNEMENT OPERATOR
 		RBTree& operator=(const RBTree& rhs){
 			if (this == &rhs)
 				return (*this);
+			range_erase(begin(), end());
+			_key_comp = rhs._key_comp;
+			range_insert(rhs.begin(), rhs.end());
+			return (*this);
 		}
 		//		ITERATORS
 		iterator				begin(){return iterator(Header->left);}
@@ -261,26 +269,31 @@ namespace ft
 			erase(pos);			
 			return 1;
 		}
-		void erase(iterator& pos){
+		iterator	erase(iterator& pos){
+			iterator it(pos.node);
+			++it;
 			_delete_node(pos.node->key);
 			_update_header();
 			_update_root_parent();
 			_node_allocator.destroy(pos.node);
 			_node_allocator.deallocate(pos.node, 1);
 			--count;
+			return (it);
 		}
-		void range_erase(iterator first, iterator last){
-			for(; first != last; ++first)
-				erase(first);
+		iterator	range_erase(iterator first, iterator last){
+			iterator it;
+			for(; first != last; first = it)
+				it = erase(first);
+			return (it);
 		}
 		void swap(RBTree& other){
 			std::swap(Nil, other.Nil);
 			std::swap(Header, other.Header);
-			std::swap(Header->parent, other.Header->parent);
-			std::swap(Header->left, other.Header->left);
-			std::swap(Header->right, other.Header->right);
+			// std::swap(Header->parent, other.Header->parent);
+			// std::swap(Header->left, other.Header->left);
+			// std::swap(Header->right, other.Header->right);
 			std::swap(Root, other.Root);
-			std::swap(Root->parent, other.Root->parent);
+			// std::swap(Root->parent, other.Root->parent);
 			std::swap(count, other.count);
 			std::swap(_node_allocator, other._node_allocator);
 			std::swap(_key_comp, other._key_comp);
@@ -292,15 +305,21 @@ namespace ft
 				throw(std::out_of_range("The value you're looking for is unavailable"));
 			return tmp->value.second;
 		}
+		const data_type&	at( const key_type& key ) const {
+			node_ptr tmp = search(key);
+			if (tmp == Nil)
+				throw(std::out_of_range("The value you're looking for is unavailable"));
+			return tmp->value.second;
+		}
 		data_type&	operator[]( const key_type& key ) {
 			node_ptr tmp = search(key);
 			if (tmp == Nil)
-				insert(value_type(key, data_type()));
+				return insert(value_type(key, data_type())).first->second;
 			return tmp->value.second;
 		}
 		node_allocator_type get_allocator() const {return _node_allocator;}
 		size_type max_size() const {return _node_allocator.max_size();}
-		node_ptr	search(const key_type& key){
+		node_ptr	search(const key_type& key) const {
 			node_ptr x = Root;
 			while (x != Nil && x != Header && _is_different(key, x->key))
 			{
@@ -312,6 +331,12 @@ namespace ft
 			return (x);
 		}
 		iterator	search_it(const key_type& key){
+			node_ptr pos = search(key);
+			if (pos == Nil)
+				return end();
+			return pos;
+		}
+		const_iterator	search_it(const key_type& key) const {
 			node_ptr pos = search(key);
 			if (pos == Nil)
 				return end();
@@ -352,7 +377,7 @@ namespace ft
 			node_ptr y = Header;
 			while (x != Nil)
 			{
-				if (_key_comp(key, x->key))
+				if (!_key_comp(key, x->key))
 					x = x->right;
 				else
 				{
@@ -367,7 +392,7 @@ namespace ft
 			node_ptr y = Header;
 			while (x != Nil)
 			{
-				if (_key_comp(key, x->key))
+				if (!_key_comp(key, x->key))
 					x = x->right;
 				else
 				{
@@ -401,7 +426,7 @@ namespace ft
 			Header->left = Header;
 			Header->parent = NULL;
 		}
-		bool _is_different(const key_type& lhs,  const key_type& rhs){
+		bool _is_different(const key_type& lhs,  const key_type& rhs) const {
 			return _key_comp(lhs, rhs) || _key_comp(rhs, lhs);
 		}
 		void	_rotate_left(node_ptr x){
@@ -435,7 +460,7 @@ namespace ft
 			x->parent = y;
 		}
 		void	_transplant(node_ptr u, node_ptr v){
-			if (u->parent == NULL)
+			if (u->parent == NULL || u->parent == Header) // (u->parent == NULL)
 				Root = v;
 			else if (u == u->parent->left)
 				u->parent->left = v;
@@ -446,7 +471,7 @@ namespace ft
 		}
 		void	_delete_node(const key_type& key){
 			node_ptr z = search(key);
-			if (z == Nil)
+			if (z == Nil || z == Header) // (z == Nil)
 				return ;
 			node_ptr y = z;
 			bool y_origine_color = y->color;
@@ -640,13 +665,29 @@ namespace ft
 		}
 
 		void	_update_header(){
-			Header->parent = Root;
-			Header->left = Root->minimum();
-			Header->right = Root->maximum();
+			if (Root == Nil)
+			{
+				Header->parent = NULL;
+				Header->left = Header;
+				Header->right = Header;
+			}
+			else
+			{
+				Header->parent = Root;
+				Header->left = Root->minimum();
+				Header->right = Root->maximum();
+			}
 		}
 
 		void	_update_root_parent(){
 			Root->parent = Header;
+		}
+
+		void	_delete_header_and_nil(){
+			_node_allocator.destroy(Header);
+			_node_allocator.deallocate(Header, 1);
+			_node_allocator.destroy(Nil);
+			_node_allocator.deallocate(Nil, 1);
 		}
 	};
 }
