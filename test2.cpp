@@ -21,13 +21,22 @@
 #define T2 std::string
 #define TESTED_NAMESPACE ft
 typedef TESTED_NAMESPACE::pair<const T1, T2> T3;
+#include <sstream>
 int main()
 {
-	std::list<T3> lst;
-	unsigned int lst_size = 10;
-	for (unsigned int i = 0; i < lst_size; ++i)
-		lst.push_back(T3(i, std::string((lst_size - i), i + 65)));
-	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
+	std::stringstream s;
+	unsigned int i = 25;
+	s << i;
+	std::cout << s.str() << std::endl;
+	i = 28;
+	s.str("");
+	s << i;
+	std::cout << s.str() << std::endl;
+	// std::list<T3> lst;
+	// unsigned int lst_size = 10;
+	// for (unsigned int i = 0; i < lst_size; ++i)
+	// 	lst.push_back(T3(i, std::string((lst_size - i), i + 65)));
+	// TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
 
 	// TESTED_NAMESPACE::map<int, int> mp_range(it, --(--ite));
 	// for (int i = 0; it != ite; ++it)
@@ -40,7 +49,7 @@ int main()
 
 	// std::cout << "\t-- PART ONE --" << std::endl;
 	// printSize(mp);
-	std::cout << "max_size = " << mp.max_size() << std::endl;
+	// std::cout << "max_size = " << mp.max_size() << std::endl;
 
 	// --it;
 	// tree.insert(ft::pair<int, std::string>(24, "24"));
