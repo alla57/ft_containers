@@ -66,7 +66,6 @@ namespace ft
 			return (x);
 		if (!(x->right->is_nil))
 			return x->right->minimum();
-		// std::cout << "prout" << std::endl;
 		RB_Node<Val>* y = x->parent;
 		while (x == y->right)
 		{
@@ -83,7 +82,6 @@ namespace ft
 			return (x);
 		if (!(x->right->is_nil))
 			return x->right->minimum();
-		// std::cout << "prout" << std::endl;
 		RB_Node<Val>* y = x->parent;
 		while (x == y->right)
 		{
@@ -189,7 +187,6 @@ namespace ft
 		typedef typename Node::node_ptr									node_ptr;
 		typedef Key														key_type;
 		typedef typename Val::second_type								data_type;
-		// typedef ft::pair<const Key, Data>							value_type;
 		typedef Val														value_type;
 		typedef Compare													key_compare;
 		typedef Allocator												allocator_type;
@@ -206,9 +203,6 @@ namespace ft
 		size_type	count;
 
 		//		CONSTRUCTORS
-		// RBTree(const allocator_type& alloc = allocator_type()) : _node_allocator(alloc), _key_comp(){
-		// 	_init_tree();
-		// }
 		RBTree(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _node_allocator(alloc), _key_comp(comp){
 			_init_tree();
 		}
@@ -289,11 +283,7 @@ namespace ft
 		void swap(RBTree& other){
 			std::swap(Nil, other.Nil);
 			std::swap(Header, other.Header);
-			// std::swap(Header->parent, other.Header->parent);
-			// std::swap(Header->left, other.Header->left);
-			// std::swap(Header->right, other.Header->right);
 			std::swap(Root, other.Root);
-			// std::swap(Root->parent, other.Root->parent);
 			std::swap(count, other.count);
 			std::swap(_node_allocator, other._node_allocator);
 			std::swap(_key_comp, other._key_comp);
@@ -435,7 +425,7 @@ namespace ft
 			if (y->left != Nil)
 				y->left->parent = x;
 			y->parent = x->parent;
-			if (x->parent == Header)// x->parent == NULL
+			if (x->parent == Header)
 				Root = y;
 			else if (x == x->parent->left)
 				x->parent->left = y;
@@ -460,23 +450,21 @@ namespace ft
 			x->parent = y;
 		}
 		void	_transplant(node_ptr u, node_ptr v){
-			if (u->parent == NULL || u->parent == Header) // (u->parent == NULL)
+			if (u->parent == NULL || u->parent == Header)
 				Root = v;
 			else if (u == u->parent->left)
 				u->parent->left = v;
 			else
 				u->parent->right = v;
-			// if (v != Nil)
 			v->parent = u->parent;
 		}
 		void	_delete_node(const key_type& key){
 			node_ptr z = search(key);
-			if (z == Nil || z == Header) // (z == Nil)
+			if (z == Nil || z == Header)
 				return ;
 			node_ptr y = z;
 			bool y_origine_color = y->color;
 			node_ptr x;
-			// node_ptr xp;
 			if (z->left == Nil)
 			{
 				x = z->right;
@@ -505,8 +493,6 @@ namespace ft
 				y->left->parent = y;
 				y->color = z->color;
 			}
-			// if (z->key == 73 && x->parent == z->parent)
-			// 	std::cout << "prout" << std::endl;
 			if (y_origine_color == BLACK)
 				_deleteFix(x);
 		}

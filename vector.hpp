@@ -38,17 +38,6 @@ namespace ft
 			_end_of_storage = _start + count;
 			_finish = _end_of_storage;
 		}
-		// template<class InputIt>
-		// vector(InputIt first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc){
-		// 	if (ft::is_integral<InputIt>::value)
-		// 		{
-		// 			_start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
-		// 			_end_of_storage = _start + static_cast<size_type>(first);
-		// 			_finish = _end_of_storage;
-		// 		}
-		// 	else
-		// 		_range_initialize(first, last);
-		// }
 		template<class InputIt>
 vector(typename ft::enable_if<ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc) {
   _start = _allocate_and_initialize(static_cast<size_type>(first), static_cast<value_type>(last));
@@ -229,8 +218,6 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 				return (max_size());
 			return (length);
       }
-		// optimizable if we add a specialization of forward iterator
-		// maybe it should throw if error in push_back process
 		template<class InputIt>
 		void	_range_initialize(InputIt first, InputIt last/*, ft::true_type*/){
 			for (; first != last; ++first)
@@ -238,13 +225,6 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 				push_back(*first);
 			}
 		}
-		// template<typename Integral>
-		// void	_initialize_dispatch(Integral count, )
-		// void	_fill_initialize(size_type count, const value_type& value){
-		// 	_start = _allocate_and_initialize(count, value);
-		// 	_end_of_storage = _start + count;
-		// 	_finish = _end_of_storage;
-		// }
 		pointer	_allocate(size_type count){
 			if (count > _allocator.max_size())
 				throw(std::length_error("cannot create std::vector larger than max_size()"));
@@ -295,7 +275,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 		void	_fill_insert(iterator pos, const size_type count, const value_type& value) {
 			if (count == 0)
 				return ;
-			size_type available_storage = _end_of_storage - _finish; //maybe we should divide by the size of the value type (check with big objects)
+			size_type available_storage = _end_of_storage - _finish;
 			size_type elm_until_end = end() - pos;
 			if (count <= available_storage)
 			{
@@ -397,13 +377,6 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			_range_insert(pos, tmp.begin(), tmp.end());
 		}
 	};
-	//		CONSTRUCTORS DEFINITION
-
-	// template<class T, class Allocator = std::allocator<T> >
-	// Vector<T, Allocator>::Vector(const Allocator& alloc = Allocator())
-	// {
-	// }
-
 	//								NON-MEMBER FUNCTIONS
 	template< class T, class Alloc >
 	bool operator==( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ){

@@ -144,10 +144,6 @@ namespace ft
 	reverse_iterator<Iter> operator+(typename reverse_iterator<Iter>::difference_type n, const reverse_iterator<Iter>& it){
 		return (reverse_iterator<Iter>(it.base() - n));
 	}
-	// template<class Iter>
-	// typename reverse_iterator<Iter>::difference_type operator-(const reverse_iterator<Iter>& lhs, const reverse_iterator<Iter>& rhs){
-	// 	return (rhs.base() - lhs.base());
-	// }
 	template< class Iterator1, class Iterator2 >
 	typename reverse_iterator<Iterator1>::difference_type operator-( const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs ){
 		return (rhs.base() - lhs.base());
@@ -172,8 +168,6 @@ namespace ft
 		// 		Constructors
 		normal_iterator() : current(Iter()){}
 		normal_iterator(const Iter& i) : current(i){}
-		// template<typename U>
-		// normal_iterator(const typename ft::enable_if< ft::is_same<U, Iter>::value, normal_iterator<U> >::type & i) : current(i.base()){}
 		template <class U>
 		normal_iterator(const normal_iterator<U>& other) : current(other.base()){}
 
