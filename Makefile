@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -Wextra -Werror -I./ -std=c++98
 
 NAME = Containers
 
-SRC_PATH =	test.cpp		\
+SRC_PATH =	main.cpp		\
 
 SRC = $(SRC_PATH)
 
