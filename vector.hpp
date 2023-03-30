@@ -57,7 +57,11 @@ vector(typename ft::enable_if<ft::is_integral<InputIt>::value, InputIt>::type fi
 }
 
 template<class InputIt>
-vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc), _start(), _finish(), _end_of_storage() {
+vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last, const Allocator& alloc = Allocator()) : _allocator(alloc) {
+  difference_type count = ft::distance(first, last);
+  _start = _allocate(count);
+  _end_of_storage = _start + count;
+  _finish = _start;
   _range_initialize(first, last);
 }
 		vector(const vector& other) : _allocator(), _start(), _finish(), _end_of_storage(){*this = other;}
@@ -313,7 +317,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 				_realloc_and_insert_n(pos, count, value);
 		}
 		template<typename InputIt>
-		void	_range_realloc_and_insert(iterator pos, InputIt first, InputIt last, ft::input_iterator_tag){
+		void	_range_realloc_and_insert(iterator pos, InputIt first, InputIt last, std::input_iterator_tag){
 			if (pos == end())
 			{
 				for (; first != last; ++first)
@@ -326,7 +330,7 @@ vector(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type f
 			}
 		}
 		template<typename ForwardIt>
-		void	_range_realloc_and_insert(iterator pos, ForwardIt first, ForwardIt last, ft::forward_iterator_tag){
+		void	_range_realloc_and_insert(iterator pos, ForwardIt first, ForwardIt last, std::forward_iterator_tag){
 			size_type count = ft::distance(first, last);
 			size_type new_capacity = _check_length(count);
 			pointer tmp_start = _allocate(new_capacity);

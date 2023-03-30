@@ -6,13 +6,6 @@
 
 namespace ft
 {
-	//									ITERATOR TAGS
-	struct input_iterator_tag{};
-	struct output_iterator_tag{};
-	struct forward_iterator_tag : public input_iterator_tag{};
-	struct bidirectional_iterator_tag : public forward_iterator_tag{};
-	struct random_access_iterator_tag : public bidirectional_iterator_tag, std::random_access_iterator_tag{};
-
 	//									ITERATOR_TRAITS
 	template<class Iter>
 	struct iterator_traits
@@ -31,7 +24,7 @@ namespace ft
 		typedef	T								value_type;
 		typedef T*								pointer;
 		typedef T&								reference;
-		typedef ft::random_access_iterator_tag	iterator_category;
+		typedef std::random_access_iterator_tag	iterator_category;
 	};
 
 	template<class T>
@@ -41,7 +34,7 @@ namespace ft
 		typedef	T								value_type;
 		typedef const T*						pointer;
 		typedef const T&						reference;
-		typedef ft::random_access_iterator_tag	iterator_category;
+		typedef std::random_access_iterator_tag	iterator_category;
 	};
 
 	// 									ITERATOR CATEGORY
@@ -63,11 +56,11 @@ namespace ft
 
 	// 									DISTANCE
 	template<typename It>
-	typename iterator_traits<It>::difference_type	do_distance(It first, It last, ft::random_access_iterator_tag){
+	typename iterator_traits<It>::difference_type	do_distance(It first, It last, std::random_access_iterator_tag){
 		return (last - first);
 	}
 	template<typename It>
-	typename iterator_traits<It>::difference_type	do_distance(It first, It last, ft::input_iterator_tag){
+	typename iterator_traits<It>::difference_type	do_distance(It first, It last, std::input_iterator_tag){
 		typename iterator_traits<It>::difference_type count = 0;
 		for(; first != last; ++first)
 			++count;

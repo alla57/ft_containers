@@ -74,6 +74,26 @@ void test_ft_vector()
 		vct.push_back("FOUR");
 		vct.erase(vct.begin(), vct.end());
 	}
+	// push and pop back
+	{
+		ft::vector<std::string> vct(8);
+		ft::vector<std::string> vct2;
+		ft::vector<std::string>::iterator it = vct.begin();
+
+		for (unsigned long int i = 0; i < vct.size(); ++i)
+			it[i] = std::string((vct.size() - i), i + 65);
+
+		vct.push_back("One long string");
+		vct2.push_back("Another long string");
+		for (unsigned long int i = 0; i < 100; ++i)
+			vct.push_back("AAAAAAAAAAAAAAA");
+		for (unsigned long int i = 0; i < 100; ++i)
+			vct2.push_back("BBBBBBBBBBBBBBBB");
+		for (unsigned long int i = 0; i < 50; ++i)
+			vct.pop_back();
+		for (unsigned long int i = 0; i < 50; ++i)
+			vct2.pop_back();
+	}
 }
  
 void test_std_vector()
